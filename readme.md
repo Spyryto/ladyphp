@@ -33,8 +33,7 @@ string Lady::toLady(string $phpCode)
 
 ## Todo
 
-- ignore comments
-- simple command line API
+- nicer command line API
 - watchdog that converts all .lady files in directory to .php on the fly
 - plugin for text editors that does bidirectional conversion
 - PHP method that can include .lady files with `Lady::requireFile('path/file.lady')`
@@ -44,4 +43,5 @@ string Lady::toLady(string $phpCode)
 @var       │ $this->var
 @method()  │ $this->method()
 a ~ b      │ a . b
+[a: b]     │ array('a' => 'b')
 ```
