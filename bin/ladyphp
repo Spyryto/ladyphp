@@ -1,0 +1,30 @@
+#!/usr/bin/env php
+<?php
+
+require __DIR__ . "/../src/Lady.php";
+
+$opt = getopt('i:o:lpqh', array('help'));
+if (!isset($opt['i']) || (isset($opt['l']) && isset($opt['p']))
+    || isset($opt['h']) || isset($opt['help'])) {
+  die("LadyPHP usage:\n  ladyphp -i file.lady -o file.php\n"
+    . "  ladyphp -l -i file.php -o file.lady\nOptions:\n"
+    . "  -i FILE   Input file\n"
+    . "  -o FILE   Output file (optional)\n"
+    . "  -p        Convert Lady to PHP (default)\n"
+    . "  -l        Convert PHP to Lady\n"
+    . "  -q        Hide messages\n");
+}
+if (isset($opt['o'])) {
+  $outputFile = $opt['o'];
+} elseif (isset($opt['l'])) {
+  $outputFile = preg_replace('{\.php$}', '', $opt['i']) . '.lady';
+} else {
+  $outputFile = preg_replace('{\.lady$}', '', $opt['i']) . '.php';
+}
+if (!isset($opt['q'])) {
+  file_put_contents('php://stderr', "Generating "
+    . (isset($opt['l']) ? 'LadyPHP' : 'PHP') . " file: $outputFile\n");
+}
+$input = file_get_contents($opt['i']);
+$output = isset($opt['l']) ? Lady::toLady($input) : Lady::toPhp($input);
+file_put_contents($outputFile, $output);

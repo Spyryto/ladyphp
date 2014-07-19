@@ -1,0 +1,16 @@
+{
+    "name": "unu/ladyphp",
+    "description": "Type PHP with elegance.",
+    "authors": [
+        {
+            "name": "Honza Novák",
+            "email": "hi@honzanovak.com"
+        }
+    ],
+    "bin": ["bin/ladyphp"],
+    "autoload": {
+        "psr-4": {
+            "": "src/"
+        }
+    }
+}
