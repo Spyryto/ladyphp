@@ -13,8 +13,8 @@ class Lady {
     'classId' => '\b(?:self|static|[A-Z][\w\d\_]*)\b',
     'varId' => '\b[a-z\_][\w\d\_]*\b',
     'ignoredTokens' => '{^T_((DOC_|ML_)?COMMENT|INLINE_HTML)$}',
-    'codeAndString' => '([^"\']*)?("[^"\\\\]*(\\\\.[^"\\\\]*)*"
-      |\'[^\'\\\\]*(\\\\.[^\'\\\\]*)*\')?',
+    'codeAndString' => '{([^"\']*)?("[^"\\\\]*(\\\\.[^"\\\\]*)*"
+      |\'[^\'\\\\]*(\\\\.[^\'\\\\]*)*\')?}x',
   );
 
   public static function toPhp($input){
@@ -53,8 +53,7 @@ class Lady {
       list($type, $text) = is_array($token) ? $token : array(true, $token);
       if ($type === false
           || preg_match(self::$regexps['ignoredTokens'], token_name($type))) {
-        $output .= self::convertCodeToken($code, $rules);
-        $output .= $text;
+        $output .= self::convertCodeToken($code, $rules) . $text;
         $code = '';
       } else {
         $code .= $text;
@@ -67,7 +66,7 @@ class Lady {
     $rules += array('~ \s+$ ~' => '');
     $output = '';
     while (mb_strlen($input) > 0) {
-      preg_match('{^' . self::$regexps['codeAndString'] . '}x', $input, $m);
+      preg_match(self::$regexps['codeAndString'], $input, $m);
       $m += array_fill(0, 3, '');
       $output .= preg_replace(array_keys($rules), $rules, $m[1]) . $m[2];
       $input = mb_substr($input, mb_strlen($m[0]));
