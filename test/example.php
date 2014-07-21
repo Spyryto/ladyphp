@@ -28,7 +28,9 @@ class Fruit {
     @self::staticMethod();
   }
 
-  public static function staticMethod() {}
+  public static function staticMethod() {
+    $float = 0.42;
+  }
 }
 
 $fruit = new Fruit();

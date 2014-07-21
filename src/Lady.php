@@ -20,7 +20,7 @@ class Lady {
   public static function toPhp($input){
     extract(self::$patterns);
     return self::convert($input, array(
-      '~ \.([\w_]) ~x' => '->\1', // dots to arrows
+      '~ \.([a-zA-Z_]) ~x' => '->\1', // dots to arrows
       '~ \.(\.|\-\>) ~x' => '.', // duplicated dots to single dot
       '~ ([^\\\\]|^) @@ ~x' => '\1self::', // @@ to self
       '~ ([^\\\\]|^) @ ~x' => '\1$this->', // @ to $this
@@ -42,7 +42,7 @@ class Lady {
       '~ @ ~x' => '\\@', // escape @
       '~ \$this\-> ~x' => '@', // $this to @
       '~ \b self:: ~x' => '@@', // self to @
-      '~ \. (?!\=) ~x' => '..', // dots to double dots
+      '~ \. (?![=0-9]) ~x' => '..', // dots to double dots
       '~ (\-\>|::) ~x' => '.', // arrows to dots
       '~ \$ ([\w\d\_]+ \s* ([^\w\_\s\(] | $) ) ~x' => '\1', // remove dolars
       '~ \s? => ~x' => ':', // double arrows to colons

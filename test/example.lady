@@ -28,7 +28,9 @@ class Fruit {
     \@@@staticMethod();
   }
 
-  public static staticMethod() {}
+  public static staticMethod() {
+    float = 0.42;
+  }
 }
 
 fruit = new Fruit();
