@@ -13,8 +13,12 @@ example-test:
 	@rm test/toLady.actual test/toLady.diff
 	@echo 'PASSED'
 
+	@printf 'Linting example.php: '
+	@php -l test/example.php > /dev/null
+	@echo 'PASSED'
+
 self-test:
-	@printf 'Testing on Lady itself: '
+	@printf 'Converts own source code: '
 	@./bin/ladyphp -q -o test/Lady.lady src/Lady.php
 	@./bin/ladyphp -q test/Lady.lady
 	@diff -u src/Lady.php test/Lady.php > test/Lady.diff

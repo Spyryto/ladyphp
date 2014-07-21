@@ -2,7 +2,7 @@
 
 class Fruit {
   private $apples = 0;
-  private $numbers = [
+  private static $numbers = [
     1 => 'one',
     2 => 'two',
     3 => 'three'
@@ -16,17 +16,19 @@ class Fruit {
   }
 
   public function countApples() {
-    $apples = $this->apples;
     $out = 'You have ';
-    $out .= isset($this->numbers[$apples])
-           ? $this->numbers[$apples] : $apples;
-    switch ($apples) {
+    $out .= isset(self::$numbers[$this->apples]) ? self::$numbers[$this->apples] : $this->apples;
+    switch ($this->apples) {
       case 1;
         return $out . ' apple.';
       default;
         return "$out apples.";
     }
+    $this->addApples(0);
+    @self::staticMethod();
   }
+
+  public static function staticMethod() {}
 }
 
 $fruit = new Fruit();
@@ -40,5 +42,5 @@ $anonym();
 
 echo "<p>" . $fruit->countApples() . "</p>";
 
-Cls::func();
+@Cls::func();
 Cls::$v;

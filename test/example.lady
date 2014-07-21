@@ -2,7 +2,7 @@
 
 class Fruit {
   private apples = 0;
-  private numbers = [
+  private static numbers = [
     1: 'one',
     2: 'two',
     3: 'three'
@@ -10,23 +10,25 @@ class Fruit {
 
   public addApples(n = 0) {
     if (n >= 0) {
-      this.apples += n;
+      @apples += n;
     }
     return this;
   }
 
   public countApples() {
-    apples = this.apples;
     out = 'You have ';
-    out .= isset(this.numbers[apples])
-           ? this.numbers[apples] : apples;
-    switch (apples) {
+    out .= isset(@@numbers[@apples]) ? @@numbers[@apples] : @apples;
+    switch (@apples) {
       case 1;
         return out .. ' apple.';
       default;
         return "$out apples.";
     }
+    @addApples(0);
+    \@@@staticMethod();
   }
+
+  public static staticMethod() {}
 }
 
 fruit = new Fruit();
@@ -40,5 +42,5 @@ $anonym();
 
 echo "<p>" .. fruit.countApples() .. "</p>";
 
-Cls.func();
+\@Cls.func();
 Cls.v;

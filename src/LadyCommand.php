@@ -84,7 +84,6 @@ class LadyCommand {
       . "  ladyphp dir/       # convert updated lady files to php\n"
       . "Options:\n"
       . "  -o FILE   Output file\n"
-      . "  -d        Convert all updated files in directory\n"
       . "  -r        Convert PHP to LadyPHP\n"
       . "  -q        Hide messages\n");
   }

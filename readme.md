@@ -9,13 +9,19 @@ Lady       │ PHP
 ───────────┼────────────────────
 var        │ $var
 obj.var    │ $obj->var
-obj.f()    │ $obj->f()
+obj.fx()   │ $obj->fx()
+@var       │ $this->var
+@fx()      │ $this->fx()
+@@var      │ self::$var
+@@fx()     │ self::fx()
 Cls.var    │ Cls::$var
 public a() │ public function a()
 <?         │ <?php
 [1: 2]     │ [1 => 2]
 a .. b     │ a . b
 ```
+
+To write error control operator `@`, you have to escape it with `\`.
 
 ## API
 
@@ -27,21 +33,19 @@ string Lady::toLady(string $phpCode)
 ## Usage from command line
 
 ```bash
-./bin/ladyphp -i file.lady    # creates file.php
-./bin/ladyphp -l -i input.php -o output.lady
+ladyphp file.lady  # creates file.php
+ladyphp file.php   # creates file.lady\n"
+ladyphp dir/       # convert updated lady files to php
 ```
 
 ## Todo
 
-- nicer command line API
 - watchdog that converts all .lady files in directory to .php on the fly
 - plugin for text editors that does bidirectional conversion
-- PHP method that can include .lady files with `Lady::requireFile('path/file.lady')`
-- PHP file stream that can include .lady files with `require('lady://path/file.lady')`
+- maybe: PHP method that can include .lady files with `Lady::requireFile('path/file.lady')`
+- maybe: PHP file stream that can include .lady files with `require('lady://path/file.lady')`
 - add more syntactic sugar
 ```
-@var       │ $this->var
-@method()  │ $this->method()
 a ~ b      │ a . b
 [a: b]     │ array('a' => 'b')
 ```

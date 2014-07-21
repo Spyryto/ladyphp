@@ -1,7 +1,7 @@
 <?php
 
 class Lady {
-  protected static $regexps = array(
+  protected static $patterns = array(
     'methodPrefix' => '\b(?:private|protected|public)(?:\s+ static)?\s+',
     'keywords' => 'abstract|and|as|break|callable|case|catch|class|clone|const
       |continue|declare|default|do|echo|else|elseif|end|enddeclare|endfor
@@ -18,10 +18,13 @@ class Lady {
   );
 
   public static function toPhp($input){
-    extract(self::$regexps);
+    extract(self::$patterns);
     return self::convert($input, array(
       '~ \.([\w_]) ~x' => '->\1', // dots to arrows
-      '~ \.(\.|\-\>) ~x' => '.', // two dots to dot
+      '~ \.(\.|\-\>) ~x' => '.', // duplicated dots to single dot
+      '~ ([^\\\\]|^) @@ ~x' => '\1self::', // @@ to self
+      '~ ([^\\\\]|^) @ ~x' => '\1$this->', // @ to $this
+      '~ \\\\@ ~x' => '@', // unescape @
       "~ ({$classId}) \-> ~x" => '\1::', // arrows to two colons
       "~ ([^>\\\$]|^) ({$varId} (?!\\()) ~x" => '\1\$\2', // add dollars
       '~ ([^\s]|^) \: (\s) ~x' => '\1 =>\2', // colons to double arrows
@@ -34,9 +37,12 @@ class Lady {
   }
 
   public static function toLady($input){
-    extract(self::$regexps);
+    extract(self::$patterns);
     return self::convert($input, array(
-      '~ \. (?!\=) ~x' => '..', // dots to two dots
+      '~ @ ~x' => '\\@', // escape @
+      '~ \$this\-> ~x' => '@', // $this to @
+      '~ \b self:: ~x' => '@@', // self to @
+      '~ \. (?!\=) ~x' => '..', // dots to double dots
       '~ (\-\>|::) ~x' => '.', // arrows to dots
       '~ \$ ([\w\d\_]+ \s* ([^\w\_\s\(] | $) ) ~x' => '\1', // remove dolars
       '~ \s? => ~x' => ':', // double arrows to colons
@@ -52,7 +58,7 @@ class Lady {
     foreach ($tokens as $token) {
       list($type, $text) = is_array($token) ? $token : array(true, $token);
       if ($type === false
-          || preg_match(self::$regexps['ignoredTokens'], token_name($type))) {
+          || preg_match(self::$patterns['ignoredTokens'], token_name($type))) {
         $output .= self::convertCodeToken($code, $rules) . $text;
         $code = '';
       } else {
@@ -66,7 +72,7 @@ class Lady {
     $rules += array('~ \s+$ ~' => '');
     $output = '';
     while (mb_strlen($input) > 0) {
-      preg_match(self::$regexps['codeAndString'], $input, $m);
+      preg_match(self::$patterns['codeAndString'], $input, $m);
       $m += array_fill(0, 3, '');
       $output .= preg_replace(array_keys($rules), $rules, $m[1]) . $m[2];
       $input = mb_substr($input, mb_strlen($m[0]));
