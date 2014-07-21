@@ -1,8 +1,7 @@
 #!/usr/bin/env php
 <?php
-chdir(__DIR__);
 $phar = new Phar('ladyphp.phar');
-$phar->buildFromDirectory(__DIR__ . '/src');
+$phar->buildFromDirectory(__DIR__ . '/../src');
 $phar->setStub('#!/usr/bin/env php
 <?php
 Phar::mapPhar("ladyphp.phar");
