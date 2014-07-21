@@ -21,11 +21,11 @@ class Lady {
     extract(self::$patterns);
     return self::convert($input, array(
       '~ \.([a-zA-Z_]) ~x' => '->\1', // dots to arrows
+      "~ ({$classId}) \-> ~x" => '\1::', // arrows to two colons
       '~ \.(\.|\-\>) ~x' => '.', // duplicated dots to single dot
       '~ ([^\\\\]|^) @@ ~x' => '\1self::', // @@ to self
       '~ ([^\\\\]|^) @ ~x' => '\1$this->', // @ to $this
       '~ \\\\@ ~x' => '@', // unescape @
-      "~ ({$classId}) \-> ~x" => '\1::', // arrows to two colons
       "~ \\$ ~x" => "\\\\$", // escape dollars
       "~ ([^>\\\$]|^) ({$varId} (?!\\()) ~x" => '\1\$\2', // add dollars
       "~ ([^\\\\]|^) \\$({$keywords}) \b ~x" => '\1\2', // remove dollars from keywords
@@ -43,11 +43,11 @@ class Lady {
     return self::convert($input, array(
       '~ @ ~x' => '\\@', // escape @
       '~ \$this\-> ~x' => '@', // $this to @
-      '~ \b self:: ~x' => '@@', // self to @
+      '~ \b self:: ~x' => '@@', // self to @@
       '~ \. (?![=0-9]) ~x' => '..', // dots to double dots
       '~ (\-\>|::) ~x' => '.', // arrows to dots
       "~ \\$ ({$keywords}) \b ~x" => "\\\\$\\0", // escape dollars before keywords
-      '~ ([^\\\\]|^) \$ (\w+ \s* ([^\w\s\(] | $) ) ~x' => '\1\2', // remove dolars
+      '~ ([^\\\\]|^) \$ (\w+ \b (?!\s*\\() ) ~x' => '\1\2', // remove dolars
       '~ \\\\ \$ ~x' => '$', // unescape dollars before keywords
       '~ \s? => ~x' => ':', // double arrows to colons
       '~ <\?php \b ~x' => '<?', //self::convert long opening tag to short tag
