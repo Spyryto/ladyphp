@@ -10,8 +10,8 @@ class Lady {
       |insteadof|interface|namespace|new|null|or|print|private|protected|public
       |require|require_once|return|self|static|switch|throw|trait|true|try|use
       |var|while|xor|yield',
-    'classId' => '\b(?:self|static|[A-Z][\w\d\_]*)\b',
-    'varId' => '\b[a-z\_][\w\d\_]*\b',
+    'classId' => '\b(?:self|static|[A-Z]\w*)\b',
+    'varId' => '\b[a-z\_]\w*\b',
     'ignoredTokens' => '{^T_((DOC_|ML_)?COMMENT|INLINE_HTML)$}',
     'codeAndString' => '{([^"\']*)?("[^"\\\\]*(\\\\.[^"\\\\]*)*"
       |\'[^\'\\\\]*(\\\\.[^\'\\\\]*)*\')?}x',
@@ -26,11 +26,13 @@ class Lady {
       '~ ([^\\\\]|^) @ ~x' => '\1$this->', // @ to $this
       '~ \\\\@ ~x' => '@', // unescape @
       "~ ({$classId}) \-> ~x" => '\1::', // arrows to two colons
+      "~ \\$ ~x" => "\\\\$", // escape dollars
       "~ ([^>\\\$]|^) ({$varId} (?!\\()) ~x" => '\1\$\2', // add dollars
-      '~ ([^\s]|^) \: (\s) ~x' => '\1 =>\2', // colons to double arrows
-      "~ \\$({$keywords}) \b ~x" => '\1', // remove dollars from keywords
+      "~ ([^\\\\]|^) \\$({$keywords}) \b ~x" => '\1\2', // remove dollars from keywords
       '~ \<\?\$php \b ~x' => '<?php', // remove dollars from opening tags
       "~^ (\s* function \s*) \\$ ~xm" => '\1', // remove dollars from function names
+      '~ \\\\ \$ ~x' => '$', // unescape dollars
+      '~ ([^\s]|^) \: (\s) ~x' => '\1 =>\2', // colons to double arrows
       '~ <\? (?!php\b) ~x' => '<?php', // convert short opening tag to long tag
       "~ ({$methodPrefix}) ({$varId} \s* \() ~x" => '\1function \2', // add function to methods
     ));
@@ -44,7 +46,9 @@ class Lady {
       '~ \b self:: ~x' => '@@', // self to @
       '~ \. (?![=0-9]) ~x' => '..', // dots to double dots
       '~ (\-\>|::) ~x' => '.', // arrows to dots
-      '~ \$ ([\w\d\_]+ \s* ([^\w\_\s\(] | $) ) ~x' => '\1', // remove dolars
+      "~ \\$ ({$keywords}) \b ~x" => "\\\\$\\0", // escape dollars before keywords
+      '~ ([^\\\\]|^) \$ (\w+ \s* ([^\w\s\(] | $) ) ~x' => '\1\2', // remove dolars
+      '~ \\\\ \$ ~x' => '$', // unescape dollars before keywords
       '~ \s? => ~x' => ':', // double arrows to colons
       '~ <\?php \b ~x' => '<?', //self::convert long opening tag to short tag
       "~ ({$methodPrefix}) function \s+ ({$varId} \s* \() ~x" => '\1\2', // remove function from methods
