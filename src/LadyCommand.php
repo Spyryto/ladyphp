@@ -27,9 +27,9 @@ class LadyCommand {
 
     if (is_dir($inputFile)) {
       if (isset($opt['w'])) {
-        self::watchDirectory($inputFile, $convertToLady);
+        $this->watchDirectory($inputFile, $convertToLady);
       } else {
-        $files = self::convertDirectory($inputFile, $convertToLady);
+        $files = $this->convertDirectory($inputFile, $convertToLady);
         $this->log(count($files) ? 'All files are up to date.'
           : 'There are no files to convert.');
       }
