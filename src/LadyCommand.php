@@ -4,7 +4,7 @@ class LadyCommand {
   public $quiet = false;
 
   public function run($argv) {
-    $options = 'o:rqh';
+    $options = 'o:rwqh';
     $opt = getopt($options, array('help'));
 
     foreach ($opt as $o => $a) {
@@ -26,9 +26,13 @@ class LadyCommand {
     $convertToLady = preg_match('{\.php$}', $inputFile) || isset($opt['r']);
 
     if (is_dir($inputFile)) {
-      $files = self::convertDirectory($inputFile, $convertToLady);
-      $this->log(count($files) ? 'All files are up to date.'
-        : 'There are no files to convert.');
+      if (isset($opt['w'])) {
+        self::watchDirectory($inputFile, $convertToLady);
+      } else {
+        $files = self::convertDirectory($inputFile, $convertToLady);
+        $this->log(count($files) ? 'All files are up to date.'
+          : 'There are no files to convert.');
+      }
     } else {
       if (isset($opt['o'])) {
         $outputFile = $opt['o'];
@@ -69,6 +73,14 @@ class LadyCommand {
     return $files;
   }
 
+  public function watchDirectory($dir, $convertToLady = false) {
+    $this->log("Watching directory: $dir");
+    while (true) {
+      $this->convertDirectory($dir, $convertToLady);
+      sleep(2);
+    }
+  }
+
   protected function log($text) {
     if (!$this->quiet) {
       file_put_contents('php://stderr', "$text\n");
@@ -81,9 +93,10 @@ class LadyCommand {
       . "Example:\n"
       . "  ladyphp file.lady  # creates file.php\n"
       . "  ladyphp file.php   # creates file.lady\n"
-      . "  ladyphp dir/       # convert updated lady files to php\n"
+      . "  ladyphp -w dir/    # watches directory and converts updated lady files\n"
       . "Options:\n"
       . "  -o FILE   Output file\n"
+      . "  -w        Watch directory for changes\n"
       . "  -r        Convert PHP to LadyPHP\n"
       . "  -q        Hide messages\n");
   }

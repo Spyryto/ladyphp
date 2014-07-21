@@ -34,18 +34,17 @@ string Lady::toLady(string $phpCode)
 
 ```bash
 ladyphp file.lady  # creates file.php
-ladyphp file.php   # creates file.lady\n"
-ladyphp dir/       # convert updated lady files to php
+ladyphp file.php   # creates file.lady
+ladyphp -w dir/    # watches directory and converts updated lady files
 ```
 
 ## Todo
 
-- watchdog that converts all .lady files in directory to .php on the fly
 - plugin for text editors that does bidirectional conversion
 - maybe: PHP method that can include .lady files with `Lady::requireFile('path/file.lady')`
 - maybe: PHP file stream that can include .lady files with `require('lady://path/file.lady')`
 - add more syntactic sugar
 ```
-a ~ b      │ a . b
-[a: b]     │ array('a' => 'b')
+a ~ b  │ a . b
+[a: b] │ array('a' => 'b')
 ```
