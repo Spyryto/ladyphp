@@ -11,7 +11,8 @@ class Lady {
       |self|static|switch|throw|trait|true|try|use|var|while|xor|yield|array
       |binary|bool(ean)?|double|float|int(eger)?|object|real|string|unset',
     'classId' => '\b (?:self|static|parent| [A-Z]\w* | _+[A-Z])\b',
-    'varId' => '\b (?:[a-z]|_+[a-z]) \w* \b',
+    'varId' => '\b (?:[a-z]|_+[a-z]|GLOBALS|_SERVER|_REQUEST|_POST|_GET|_FILES
+      |_ENV|_COOKIE|_SESSION) \w* \b',
     'ignoredTokens' => '{^T_((DOC_|ML_)?COMMENT|INLINE_HTML)$}',
     'codeAndString' => '{([^"\']*)?("[^"\\\\]*(\\\\.[^"\\\\]*)*"
       |\'[^\'\\\\]*(\\\\.[^\'\\\\]*)*\')?}x',
@@ -20,14 +21,14 @@ class Lady {
   public static function toPhp($input){
     extract(self::$patterns);
     return self::convert($input, array(
-      '~ \.([a-zA-Z_]) ~x' => '->\1', // dots to arrows
+      '~ \.([a-zA-Z_$]) ~x' => '->\1', // dots to arrows
       "~ ({$classId}) \-> ~x" => '\1::', // arrows to two colons
       '~ \.(\.|\-\>) ~x' => '.', // duplicated dots to single dot
       '~ ([^\\\\]|^) @@ ~x' => '\1self::', // @@ to self
       '~ ([^\\\\]|^) @ ~x' => '\1$this->', // @ to $this
       '~ \\\\@ ~x' => '@', // unescape @
       "~ \\$ ~x" => "\\\\$", // escape dollars
-      "~ ([^>\\\$]|^) ({$varId} (?!\\()) ~x" => '\1\$\2', // add dollars
+      "~ ([^>\\\$\\\\]|^) ({$varId} (?!\\()) ~x" => '\1\$\2', // add dollars
       "~ ([^\\\\]|^) \\$({$keywords}) \b ~x" => '\1\2', // remove dollars from keywords
       '~ \<\?\$php \b ~x' => '<?php', // remove dollars from opening tags
       "~^ (\s* function \s*) \\$ ~xm" => '\1', // remove dollars from function names
