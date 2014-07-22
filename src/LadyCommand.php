@@ -4,7 +4,7 @@ class LadyCommand {
   public $quiet = false;
 
   public function run($argv) {
-    $options = 'o:rwqh';
+    $options = 'o:rwtqh';
     $opt = getopt($options, array('help'));
 
     foreach ($opt as $o => $a) {
@@ -26,7 +26,9 @@ class LadyCommand {
     $convertToLady = preg_match('{\.php$}', $inputFile) || isset($opt['r']);
 
     if (is_dir($inputFile)) {
-      if (isset($opt['w'])) {
+      if (isset($opt['t'])) {
+        $this->testDirectory($inputFile);
+      } elseif (isset($opt['w'])) {
         $this->watchDirectory($inputFile, $convertToLady);
       } else {
         $files = $this->convertDirectory($inputFile, $convertToLady);
@@ -34,41 +36,37 @@ class LadyCommand {
           : 'There are no files to convert.');
       }
     } else {
-      if (isset($opt['o'])) {
-        $outputFile = $opt['o'];
-      } elseif ($convertToLady) {
+      if (isset($opt['t'])) {
+        $this->testFile($inputFile);
+      } else {
+        $this->convertFile($inputFile, isset($opt['o']) ? $opt['o'] : null, $convertToLady);
+      }
+    }
+  }
+
+  public function convertFile($inputFile, $outputFile = null, $convertToLady = false) {
+    if (!$outputFile) {
+      if ($convertToLady) {
         $outputFile = preg_replace('{\.php$}', '', $inputFile) . '.lady';
       } else {
         $outputFile = preg_replace('{\.lady$}', '', $inputFile) . '.php';
       }
-      $input = file_get_contents($inputFile);
-      $output = $convertToLady ? Lady::toLady($input) : Lady::toPhp($input);
-      $this->log("Generating file: $outputFile");
-      file_put_contents($outputFile, $output);
     }
+    $input = file_get_contents($inputFile);
+    $output = $convertToLady ? Lady::toLady($input) : Lady::toPhp($input);
+    $this->log("Generating file: $outputFile");
+    file_put_contents($outputFile, $output);
   }
 
   public function convertDirectory($dir, $convertToLady = false) {
-    $extensions = array('lady', 'php');
     $ext = $convertToLady ? 'php' : 'lady';
-    $newExt = $convertToLady ? 'lady' : 'php';
     $files = array();
-    $it = new RecursiveDirectoryIterator($dir ? $dir : '.');
-    $it = new RecursiveIteratorIterator($it);
-    while ($it->valid()) {
-      $file = $it->key();
-      if (!$it->isDot() && $it->isFile()
-          && pathinfo($file, PATHINFO_EXTENSION) == $ext) {
-        $newFile = substr($file, 0, -strlen($ext)) . $newExt;
-        $files[] = $newFile;
-        if (!is_file($newFile) || filemtime($newFile) <= filemtime($file)) {
-          $input = file_get_contents($file);
-          $output = $newExt == 'lady' ? Lady::toLady($input) : Lady::toPhp($input);
-          file_put_contents($newFile, $output);
-          $this->log("Generating file: $newFile");
-        }
+    foreach ($this->getFilesFromDirectory($dir, $ext) as $file) {
+      $newFile = substr($file, 0, -strlen($ext)) . ($convertToLady ? 'lady' : 'php');
+      $files[] = $newFile;
+      if (!is_file($newFile) || filemtime($newFile) <= filemtime($file)) {
+        $this->convertFile($file, $newFile, $ext == 'php');
       }
-      $it->next();
     }
     return $files;
   }
@@ -77,8 +75,46 @@ class LadyCommand {
     $this->log("Watching directory: $dir");
     while (true) {
       $this->convertDirectory($dir, $convertToLady);
-      sleep(2);
+      sleep(1);
     }
+  }
+
+  public function testFile($phpFile) {
+    $originalCode = file_get_contents($phpFile);
+    $ladyCode = Lady::toLady($originalCode);
+    $generatedCode = Lady::toPhp($ladyCode);
+    $success = ($generatedCode == $originalCode);
+    $this->log("Testing file: $phpFile - " . ($success ? 'PASSED' : 'FAILED'));
+    if (!$success) {
+      $generatedFile = tempnam(sys_get_temp_dir(), 'lady');
+      file_put_contents($generatedFile, $generatedCode);
+      $diff = shell_exec('diff -u ' . escapeshellarg($phpFile) . ' '
+        . escapeshellarg($generatedFile));
+      $this->log($diff);
+    }
+    return $success;
+  }
+
+  public function testDirectory($dir) {
+    $success = true;
+    foreach ($this->getFilesFromDirectory($dir, 'php') as $file) {
+      $success = $success && $this->testFile($file);
+    }
+    return $success;
+  }
+
+  protected function getFilesFromDirectory($dir, $ext = null) {
+    $files = array();
+    $it = new RecursiveDirectoryIterator($dir ? $dir : '.');
+    $it = new RecursiveIteratorIterator($it);
+    while ($it->valid()) {
+      if (!$it->isDot() && $it->isFile()
+          && (!$ext || pathinfo($it->key(), PATHINFO_EXTENSION) == $ext)) {
+        $files[$it->key()] = true;
+      }
+      $it->next();
+    }
+    return array_keys($files);
   }
 
   protected function log($text) {
@@ -89,7 +125,7 @@ class LadyCommand {
 
   protected function showHelp() {
     die("Usage:\n"
-      . "  ladyphp [-o FILE] [-d] [-r] [-q] INPUT_FILE\n"
+      . "  ladyphp [OPTIONS] INPUT_FILE\n"
       . "Example:\n"
       . "  ladyphp file.lady  # creates file.php\n"
       . "  ladyphp file.php   # creates file.lady\n"
@@ -98,6 +134,7 @@ class LadyCommand {
       . "  -o FILE   Output file\n"
       . "  -w        Watch directory for changes\n"
       . "  -r        Convert PHP to LadyPHP\n"
+      . "  -t        Test that files converted to lady and back are same as original\n"
       . "  -q        Hide messages\n");
   }
 }
