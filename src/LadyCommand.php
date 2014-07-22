@@ -4,7 +4,7 @@ class LadyCommand {
   public $quiet = false;
 
   public function run($argv) {
-    $options = 'o:rwtqh';
+    $options = 'o:rwtdqh';
     $opt = getopt($options, array('help'));
 
     foreach ($opt as $o => $a) {
@@ -27,7 +27,7 @@ class LadyCommand {
 
     if (is_dir($inputFile)) {
       if (isset($opt['t'])) {
-        $this->testDirectory($inputFile);
+        $this->testDirectory($inputFile, isset($opt['d']));
       } elseif (isset($opt['w'])) {
         $this->watchDirectory($inputFile, $convertToLady);
       } else {
@@ -37,7 +37,7 @@ class LadyCommand {
       }
     } else {
       if (isset($opt['t'])) {
-        $this->testFile($inputFile);
+        $this->testFile($inputFile, isset($opt['d']));
       } else {
         $this->convertFile($inputFile, isset($opt['o']) ? $opt['o'] : null, $convertToLady);
       }
@@ -79,13 +79,13 @@ class LadyCommand {
     }
   }
 
-  public function testFile($phpFile) {
+  public function testFile($phpFile, $showDiff = false) {
     $originalCode = file_get_contents($phpFile);
     $ladyCode = Lady::toLady($originalCode);
     $generatedCode = Lady::toPhp($ladyCode);
     $success = ($generatedCode == $originalCode);
-    $this->log("Testing file: $phpFile - " . ($success ? 'PASSED' : 'FAILED'));
-    if (!$success) {
+    $this->log("Test " . ($success ? 'PASSED' : 'FAILED') . ": $phpFile");
+    if (!$success && $showDiff) {
       $generatedFile = tempnam(sys_get_temp_dir(), 'lady');
       file_put_contents($generatedFile, $generatedCode);
       $diff = shell_exec('diff -u ' . escapeshellarg($phpFile) . ' '
@@ -96,13 +96,17 @@ class LadyCommand {
     return $success;
   }
 
-  public function testDirectory($dir) {
+  public function testDirectory($dir, $showDiff = false) {
+    $ok = $ko = 0;
     foreach ($this->getFilesFromDirectory($dir, 'php') as $file) {
-      if (!$this->testFile($file)) {
-        return false;
+      if ($this->testFile($file, $showDiff)) {
+        $ok++;
+      } else {
+        $ko++;
       }
     }
-    return true;
+    $this->log(sprintf("Test score: %2d OK / %2d KO", $ok, $ko));
+    return ($ko == 0);
   }
 
   protected function getFilesFromDirectory($dir, $ext = null) {
@@ -137,6 +141,7 @@ class LadyCommand {
       . "  -w        Watch directory for changes\n"
       . "  -r        Convert PHP to LadyPHP\n"
       . "  -t        Test that files converted to lady and back are same as original\n"
+      . "  -d        Show diff for tests\n"
       . "  -q        Hide messages\n");
   }
 }
