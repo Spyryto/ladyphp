@@ -10,22 +10,22 @@ class Lady {
       |null|or|parent|print|private|protected|public|require(_once)?|return
       |self|static|switch|throw|trait|true|try|use|var|while|xor|yield|array
       |binary|bool(ean)?|double|float|int(eger)?|object|real|string|unset',
-    'classId' => '\b (?:self|static|parent| [A-Z]\w* | _+[A-Z])\b',
+    'classId' => '(?<!\-\>) (?<!\$) \b (?:self|static|parent| [A-Z]\w* | _+[A-Z])\b',
     'varId' => '\b (?:[a-z]|_+[a-z]|GLOBALS|_SERVER|_REQUEST|_POST|_GET|_FILES
       |_ENV|_COOKIE|_SESSION) \w* \b',
     'ignoredTokens' => '{^T_((DOC_|ML_)?COMMENT|INLINE_HTML)$}',
     'codeAndString' => '{([^"\']*)?("[^"\\\\]*(\\\\.[^"\\\\]*)*"
-      |\'[^\'\\\\]*(\\\\.[^\'\\\\]*)*\')?}x',
+      |\'[^\'\\\\]*(\\\\.[^\'\\\\]*)*\')?}xs',
   );
 
   public static function toPhp($input){
     extract(self::$patterns);
     return self::convert($input, array(
-      '~ \.([a-zA-Z_$]) ~x' => '->\1', // dots to arrows
-      "~ ({$classId}) \-> ~x" => '\1::', // arrows to two colons
-      '~ \.(\.|\-\>) ~x' => '.', // duplicated dots to single dot
       '~ ([^\\\\]|^) @@ ~x' => '\1self::', // @@ to self
       '~ ([^\\\\]|^) @ ~x' => '\1$this->', // @ to $this
+      '~ \.([^=0-9\.]) ~x' => '->\1', // dots to arrows
+      '~ \.(\.|\-\>) ~x' => '.', // duplicated dots to single dot
+      "~ ({$classId}) \-> ~x" => '\1\2::', // arrows to two colons
       '~ \\\\@ ~x' => '@', // unescape @
       "~ \\$ ~x" => "\\\\$", // escape dollars
       "~ ([^>\\\$\\\\]|^) ({$varId} (?!\\()) ~x" => '\1\$\2', // add dollars
@@ -37,7 +37,8 @@ class Lady {
       '~ \\\\: ~x' => ':', // unescape colons
       '~ (\b case \b [^\v]*) \ => ~x' => '\1:', // remove double arrows from cases
       '~ <\? (?!php\b) ~x' => '<?php', // convert short opening tag to long tag
-      "~ ({$methodPrefix}) ({$varId} \s* \() ~x" => '\1function \2', // add function to methods
+      // add function keywords before methods
+      "~ ({$methodPrefix}) ({$varId} \s* \() ~x" => '\1function \2',
     ));
   }
 
@@ -46,17 +47,20 @@ class Lady {
     return self::convert($input, array(
       '~ @ ~x' => '\\@', // escape @
       '~ (\-\>) \$ ~x' => '\1\\\\$', // escape dollars before dynamic properties
+      '~ \$\$ ~x' => '\\\\$\\\\$', // escape dollars before dynamic variables
       "~ \\$ ({$keywords}) \b ~x" => '\\\\$\1', // escape dollars before keywords
       '~ ([^\s]|^) \: (\s) ~xm' => '\1\\\\:\2', // escape colons after cases
       '~ \$this\-> ~x' => '@', // $this to @
       '~ \b self:: ~x' => '@@', // self to @@
       '~ \. (?![=0-9]) ~x' => '..', // dots to double dots
-      '~ (\-\>|::) ~x' => '.', // arrows to dots
-      '~ ([^\\\\]|^) \$ (\w+ \b (?!\s*\\() ) ~x' => '\1\2', // remove dolars
+      '~ \-\> ~x' => '.', // arrows to dots
+      "~ ({$classId}) :: ~x" => '\1.', // double colons to dots
+      "~ ([^\\\\]|^) \\$ ({$varId} \b (?!\s*\\() ) ~x" => '\1\2', // remove dolars
       '~ \\\\ \$ ~x' => '$', // unescape dollars before keywords
-      '~ \s? => ~x' => ':', // double arrows to colons
+      '~ (^|[^\s]) \s? => (\s) ~x' => '\1:\2', // double arrows to colons
       '~ <\?php \b ~x' => '<?', //self::convert long opening tag to short tag
-      "~ ({$methodPrefix}) function \s+ ({$varId} \s* \() ~x" => '\1\2', // remove function from methods
+      // remove function keywords before methods
+      "~ ({$methodPrefix}) function \s+ ({$varId} \s* \() ~x" => '\1\2',
     ));
   }
 
@@ -85,6 +89,9 @@ class Lady {
       $m += array_fill(0, 3, '');
       $output .= preg_replace(array_keys($rules), $rules, $m[1]) . $m[2];
       $input = mb_substr($input, mb_strlen($m[0]));
+      if (empty($m[0])) {
+        throw new Exception('Cannot parse code: ' . $input);
+      }
     }
     return $output;
   }
