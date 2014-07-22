@@ -32,7 +32,9 @@ class Lady {
       '~ \<\?\$php \b ~x' => '<?php', // remove dollars from opening tags
       "~^ (\s* function \s*) \\$ ~xm" => '\1', // remove dollars from function names
       '~ \\\\ \$ ~x' => '$', // unescape dollars
-      '~ ([^\s]|^) \: (\s) ~x' => '\1 =>\2', // colons to double arrows
+      '~ ([^\s\\\\]|^) \: (\s) ~xm' => '\1 =>\2', // colons to double arrows
+      '~ \\\\: ~x' => ':', // unescape colons
+      '~ (\b case \b [^\v]*) \ => ~x' => '\1:', // remove double arrows from cases
       '~ <\? (?!php\b) ~x' => '<?php', // convert short opening tag to long tag
       "~ ({$methodPrefix}) ({$varId} \s* \() ~x" => '\1function \2', // add function to methods
     ));
@@ -49,6 +51,7 @@ class Lady {
       "~ \\$ ({$keywords}) \b ~x" => "\\\\$\\0", // escape dollars before keywords
       '~ ([^\\\\]|^) \$ (\w+ \b (?!\s*\\() ) ~x' => '\1\2', // remove dolars
       '~ \\\\ \$ ~x' => '$', // unescape dollars before keywords
+      '~ ([^\s]|^) \: (\s) ~xm' => '\1\\\\:\2', // escape colons after cases
       '~ \s? => ~x' => ':', // double arrows to colons
       '~ <\?php \b ~x' => '<?', //self::convert long opening tag to short tag
       "~ ({$methodPrefix}) function \s+ ({$varId} \s* \() ~x" => '\1\2', // remove function from methods
