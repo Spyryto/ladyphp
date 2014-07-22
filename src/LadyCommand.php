@@ -91,16 +91,18 @@ class LadyCommand {
       $diff = shell_exec('diff -u ' . escapeshellarg($phpFile) . ' '
         . escapeshellarg($generatedFile));
       $this->log($diff);
+      unlink($generatedFile);
     }
     return $success;
   }
 
   public function testDirectory($dir) {
-    $success = true;
     foreach ($this->getFilesFromDirectory($dir, 'php') as $file) {
-      $success = $success && $this->testFile($file);
+      if (!$this->testFile($file)) {
+        return false;
+      }
     }
-    return $success;
+    return true;
   }
 
   protected function getFilesFromDirectory($dir, $ext = null) {
