@@ -44,14 +44,15 @@ class Lady {
     extract(self::$patterns);
     return self::convert($input, array(
       '~ @ ~x' => '\\@', // escape @
+      '~ (\-\>) \$ ~x' => '\1\\\\$', // escape dollars before dynamic properties
+      "~ \\$ ({$keywords}) \b ~x" => '\\\\$\1', // escape dollars before keywords
+      '~ ([^\s]|^) \: (\s) ~xm' => '\1\\\\:\2', // escape colons after cases
       '~ \$this\-> ~x' => '@', // $this to @
       '~ \b self:: ~x' => '@@', // self to @@
       '~ \. (?![=0-9]) ~x' => '..', // dots to double dots
       '~ (\-\>|::) ~x' => '.', // arrows to dots
-      "~ \\$ ({$keywords}) \b ~x" => "\\\\$\\0", // escape dollars before keywords
       '~ ([^\\\\]|^) \$ (\w+ \b (?!\s*\\() ) ~x' => '\1\2', // remove dolars
       '~ \\\\ \$ ~x' => '$', // unescape dollars before keywords
-      '~ ([^\s]|^) \: (\s) ~xm' => '\1\\\\:\2', // escape colons after cases
       '~ \s? => ~x' => ':', // double arrows to colons
       '~ <\?php \b ~x' => '<?', //self::convert long opening tag to short tag
       "~ ({$methodPrefix}) function \s+ ({$varId} \s* \() ~x" => '\1\2', // remove function from methods
