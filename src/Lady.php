@@ -10,8 +10,8 @@ class Lady {
       |null|or|parent|print|private|protected|public|require(_once)?|return
       |self|static|switch|throw|trait|true|try|use|var|while|xor|yield|array
       |binary|bool(ean)?|double|float|int(eger)?|object|real|string|unset',
-    'classId' => '\b(?:self|static|parent|[A-Z]\w*)\b',
-    'varId' => '\b[a-z\_]\w*\b',
+    'classId' => '\b (?:self|static|parent| [A-Z]\w* | _+[A-Z])\b',
+    'varId' => '\b (?:[a-z]|_+[a-z]) \w* \b',
     'ignoredTokens' => '{^T_((DOC_|ML_)?COMMENT|INLINE_HTML)$}',
     'codeAndString' => '{([^"\']*)?("[^"\\\\]*(\\\\.[^"\\\\]*)*"
       |\'[^\'\\\\]*(\\\\.[^\'\\\\]*)*\')?}x',
