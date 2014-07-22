@@ -4,13 +4,13 @@ class Lady {
   protected static $patterns = array(
     'methodPrefix' => '\b(?:private|protected|public)(?:\s+ static)?\s+',
     'keywords' => 'abstract|and|as|break|callable|case|catch|class|clone|const
-      |continue|declare|default|do|echo|else|elseif|end|enddeclare|endfor
-      |endforeach|endif|endswitch|endwhile|extends|false|final|for|foreach
-      |function|global|goto|if|implements|include|include_once|instanceof
-      |insteadof|interface|namespace|new|null|or|print|private|protected|public
-      |require|require_once|return|self|static|switch|throw|trait|true|try|use
-      |var|while|xor|yield',
-    'classId' => '\b(?:self|static|[A-Z]\w*)\b',
+      |continue|declare|default|do|echo|else(if)?|end(declare|for(each)?|if
+      |switch|while)?|extends|false|final|for(each)?|function|global|goto|if
+      |implements|include(_once)?|instanceof|insteadof|interface|namespace|new
+      |null|or|parent|print|private|protected|public|require(_once)?|return
+      |self|static|switch|throw|trait|true|try|use|var|while|xor|yield|array
+      |binary|bool(ean)?|double|float|int(eger)?|object|real|string|unset',
+    'classId' => '\b(?:self|static|parent|[A-Z]\w*)\b',
     'varId' => '\b[a-z\_]\w*\b',
     'ignoredTokens' => '{^T_((DOC_|ML_)?COMMENT|INLINE_HTML)$}',
     'codeAndString' => '{([^"\']*)?("[^"\\\\]*(\\\\.[^"\\\\]*)*"

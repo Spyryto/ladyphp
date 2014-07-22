@@ -29,7 +29,7 @@ class Fruit {
   }
 
   public static function staticMethod() {
-    $try = 0.42;
+    $try = (double) 0.42;
   }
 }
 
