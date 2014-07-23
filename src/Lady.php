@@ -1,7 +1,7 @@
 <?php
 
 class Lady {
-  protected static $patterns = array(
+  protected static $patterns = [
     'methodPrefix' => '\b(?:private|protected|public)(?:\s+ static)?\s+',
     'keywords' => 'abstract|and|as|break|callable|case|catch|class|clone|const
       |continue|declare|default|do|echo|else(if)?|end(declare|for(each)?|if
@@ -16,72 +16,75 @@ class Lady {
     'ignoredTokens' => '{^T_((DOC_|ML_)?COMMENT|INLINE_HTML)$}',
     'codeAndString' => '{([^"\']*)?("[^"\\\\]*(\\\\.[^"\\\\]*)*"
       |\'[^\'\\\\]*(\\\\.[^\'\\\\]*)*\')?}xs',
-  );
-
-  public static function toPhp($input){
-    extract(self::$patterns);
-    return self::convert($input, array(
+    'trailingSpaces' => ['\h+\n' => "\n"],
+    'toPhp' => [
       '\\$' => '\\\\$', // escape dollars
       '(^|[^\\\\]) @@' => '\1self::', // @@ to self
       '(^|[^\\\\]) @' => '\1$this->', // @ to $this
       '\.([^.=0-9])' => '->\1', // dots to arrows
       '\.(\.|->)' => '.', // duplicated dots to single dot
-      "($classId) ->" => '\1::', // arrows to two colons
-      "(^|[^>\$\\\\]) ($varId (?!\() )" => '\1\$\2', // add dollars
-      "(^|[^\\\\]) \\\$ ($keywords) \b" => '\1\2', // remove dollars from keywords
+      "({classId}) ->" => '\1::', // arrows to two colons
+      "(^|[^>\$\\\\]) ({varId} (?!\() )" => '\1\$\2', // add dollars
+      "(^|[^\\\\]) \\\$ ({keywords}) \b" => '\1\2', // remove dollars from keywords
       '<\?\$php \b' => '<?php', // remove dollars from opening tags
       '(?m)^ (\s* function \s*) \\$' => '\1', // remove dollars from function names
       '(^|[^\s\\\\]) : (\s)' => '\1 =>\2', // colons to double arrows
       '(\b case \b [^\v]*) \s =>' => '\1:', // remove double arrows from cases
       '<\? (?!php\b)' => '<?php', // convert short opening tag to long tag
-      "($methodPrefix) ($varId \s*\( )" => '\1function \2', // add functions
+      "({methodPrefix}) ({varId} \s*\( )" => '\1function \2', // add functions
       '\\\\@' => '@', // unescape @
       '\\\\ \$' => '$', // unescape dollars
       '\\\\:' => ':', // unescape colons
-    ));
+    ],
+    'toLady' => [
+       '@' => '\\@', // escape @
+       '(->) \$' => '\1\\\\$', // escape dollars before dynamic properties
+       '\$\$' => '\\\\$\\\\$', // escape dollars before dynamic variables
+       "\\$ ({keywords}) \b" => '\\\\$\1', // escape dollars before keywords
+       '(?m) (^|[^\s]) : (\s)' => '\1\\\\:\2', // escape colons after cases
+       '\$this->' => '@', // $this to @
+       '\b self::' => '@@', // self to @@
+       '\. (?![=0-9])' => '..', // dots to double dots
+       '->' => '.', // arrows to dots
+       "({classId}) ::" => '\1.', // double colons to dots
+       "(^|[^\\\\]) \\$ ({varId} \b (?!\s*\() )" => '\1\2', // remove dolars
+       '(^|[^\s]) \s? => (\s)' => '\1:\2', // double arrows to colons
+       '<\?php \b' => '<?', //self::convert long opening tag to short tag
+       "({methodPrefix}) function \s+ ({varId} \s*\()" => '\1\2', // remove functions
+       '\\\\ \$' => '$', // unescape dollars before keywords
+     ]
+  ];
+
+  public static function toPhp($input){
+    return self::convert($input, self::$patterns['toPhp']);
   }
 
   public static function toLady($input){
-    extract(self::$patterns);
-    return self::convert($input, array(
-      '@' => '\\@', // escape @
-      '(->) \$' => '\1\\\\$', // escape dollars before dynamic properties
-      '\$\$' => '\\\\$\\\\$', // escape dollars before dynamic variables
-      "\\$ ($keywords) \b" => '\\\\$\1', // escape dollars before keywords
-      '(?m) (^|[^\s]) : (\s)' => '\1\\\\:\2', // escape colons after cases
-      '\$this->' => '@', // $this to @
-      '\b self::' => '@@', // self to @@
-      '\. (?![=0-9])' => '..', // dots to double dots
-      '->' => '.', // arrows to dots
-      "($classId) ::" => '\1.', // double colons to dots
-      "(^|[^\\\\]) \\$ ($varId \b (?!\s*\() )" => '\1\2', // remove dolars
-      '(^|[^\s]) \s? => (\s)' => '\1:\2', // double arrows to colons
-      '<\?php \b' => '<?', //self::convert long opening tag to short tag
-      "($methodPrefix) function \s+ ($varId \s*\()" => '\1\2', // remove functions
-      '\\\\ \$' => '$', // unescape dollars before keywords
-    ));
+    return self::convert($input, self::$patterns['toLady']);
   }
 
   protected static function convert($input, $rules) {
     $tokens = token_get_all(self::expandShortTags($input));
-    $tokens[] = array(false, '');
     $output = $code = '';
-    foreach ($tokens as $token) {
-      list($type, $text) = is_array($token) ? $token : array(true, $token);
-      if ($type === false
-          || preg_match(self::$patterns['ignoredTokens'], token_name($type))) {
-        $output .= self::convertCodeToken($code, $rules) . $text;
+    foreach (array_merge($tokens, [[null, null]]) as $token) {
+      if (is_array($token) && ($token[0] === null
+          || preg_match(self::$patterns['ignoredTokens'], token_name($token[0])))) {
+        $output .= self::convertCodeToken($code, $rules) . $token[1];
         $code = '';
       } else {
-        $code .= $text;
+        $code .= is_array($token) ? $token[1] : $token;
       }
     }
     return $output;
   }
 
   protected static function convertCodeToken($input, $rules) {
-    $rules += array('\s+$ ~' => '');
-    $patterns = preg_replace('{^.*$}s', '{\0}x', array_keys($rules));
+    $snippets = self::$patterns;
+    $rules += $snippets['trailingSpaces'];
+    $patterns = preg_replace_callback('~\{(\w+)\}~', function ($m) use ($snippets) {
+      return $snippets[$m[1]];
+    }, array_keys($rules));
+    $patterns = preg_replace('{^.*$}s', '{\0}x', $patterns);
     $output = '';
     while (mb_strlen($input) > 0) {
       preg_match(self::$patterns['codeAndString'], $input, $m);
@@ -99,7 +102,7 @@ class Lady {
     if (function_exists('ini_get') && ini_get('short_open_tag')) return $code;
     do {
       $tokens = token_get_all($code);
-      $tags = array(array('=', ' echo', 3), array('', '', 2));
+      $tags = [['=', ' echo', 3], ['', '', 2]];
       $code = $changed = null;
       foreach ($tokens as $n => $token) {
         if (!$changed && is_array($token) && $token[0] == T_INLINE_HTML) {
