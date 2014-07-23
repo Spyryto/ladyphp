@@ -13,112 +13,86 @@ class Lady {
     'classId' => '(?<!->) (?<!\$) \b(?:self|static|parent|[A-Z]\w*|_+[A-Z])\b',
     'varId' => '\b (?:[a-z]\w*|_+[a-z]\w*|GLOBALS|_SERVER|_REQUEST|_POST|_GET
       |_FILES|_ENV|_COOKIE|_SESSION) \b',
-    'ignoredTokens' => '{^T_((DOC_|ML_)?COMMENT|INLINE_HTML)$}',
-    'codeAndString' => '{([^"\']*)?("[^"\\\\]*(\\\\.[^"\\\\]*)*"
-      |\'[^\'\\\\]*(\\\\.[^\'\\\\]*)*\')?}xs',
-    'trailingSpaces' => ['\h+\n' => "\n"],
-    'toPhp' => [
-      '\\$' => '\\\\$', // escape dollars
-      '(^|[^\\\\]) @@' => '\1self::', // @@ to self
-      '(^|[^\\\\]) @' => '\1$this->', // @ to $this
-      '\.([^.=0-9])' => '->\1', // dots to arrows
-      '\.(\.|->)' => '.', // duplicated dots to single dot
-      "({classId}) ->" => '\1::', // arrows to two colons
-      "(^|[^>\$\\\\]) ({varId} (?!\() )" => '\1\$\2', // add dollars
-      "(^|[^\\\\]) \\\$ ({keywords}) \b" => '\1\2', // remove dollars from keywords
-      '<\?\$php \b' => '<?php', // remove dollars from opening tags
-      '(?m)^ (\s* function \s*) \\$' => '\1', // remove dollars from function names
-      '(^|[^\s\\\\]) : (\s)' => '\1 =>\2', // colons to double arrows
-      '(\b case \b [^\v]*) \s =>' => '\1:', // remove double arrows from cases
-      '<\? (?!php\b)' => '<?php', // convert short opening tag to long tag
-      "({methodPrefix}) ({varId} \s*\( )" => '\1function \2', // add functions
-      '\\\\@' => '@', // unescape @
-      '\\\\ \$' => '$', // unescape dollars
-      '\\\\:' => ':', // unescape colons
-    ],
-    'toLady' => [
-       '@' => '\\@', // escape @
-       '(->) \$' => '\1\\\\$', // escape dollars before dynamic properties
-       '\$\$' => '\\\\$\\\\$', // escape dollars before dynamic variables
-       "\\$ ({keywords}) \b" => '\\\\$\1', // escape dollars before keywords
-       '(?m) (^|[^\s]) : (\s)' => '\1\\\\:\2', // escape colons after cases
-       '\$this->' => '@', // $this to @
-       '\b self::' => '@@', // self to @@
-       '\. (?![=0-9])' => '..', // dots to double dots
-       '->' => '.', // arrows to dots
-       "({classId}) ::" => '\1.', // double colons to dots
-       "(^|[^\\\\]) \\$ ({varId} \b (?!\s*\() )" => '\1\2', // remove dolars
-       '(^|[^\s]) \s? => (\s)' => '\1:\2', // double arrows to colons
-       '<\?php \b' => '<?', //self::convert long opening tag to short tag
-       "({methodPrefix}) function \s+ ({varId} \s*\()" => '\1\2', // remove functions
-       '\\\\ \$' => '$', // unescape dollars before keywords
-     ]
   ];
+  protected static $toPhp = [
+    '\\$' => '\\\\$', // escape dollars
+    '(^|[^\\\\]) @@' => '\1self::', // @@ to self
+    '(^|[^\\\\]) @' => '\1$this->', // @ to $this
+    '\.([^.=0-9])' => '->\1', // dots to arrows
+    '\.(\.|->)' => '.', // duplicated dots to single dot
+    "({classId}) ->" => '\1::', // arrows to two colons
+    "(^|[^>\$\\\\]) ({varId} (?!\() )" => '\1\$\2', // add dollars
+    "(^|[^\\\\]) \\\$ ({keywords}) \b" => '\1\2', // remove dollars from keywords
+    '<\?\$php \b' => '<?php', // remove dollars from opening tags
+    '(?m)^ (\s* function \s*) \\$' => '\1', // remove dollars from function names
+    '(^|[^\s\\\\]) : (\s)' => '\1 =>\2', // colons to double arrows
+    '(\b case \b [^\v]*) \s =>' => '\1:', // remove double arrows from cases
+    '<\? (?!php\b|=)' => '<?php', // convert short opening tag to long tag
+    "({methodPrefix}) ({varId} \s*\( )" => '\1function \2', // add functions
+    '\\\\@' => '@', // unescape @
+    '\\\\ \$' => '$', // unescape dollars
+    '\\\\:' => ':', // unescape colons
+  ];
+  protected static $toLady = [
+    '@' => '\\@', // escape @
+    '(->) \$' => '\1\\\\$', // escape dollars before dynamic properties
+    '\$\$' => '\\\\$\\\\$', // escape dollars before dynamic variables
+    "\\$ ({keywords}) \b" => '\\\\$\1', // escape dollars before keywords
+    '(?m) (^|[^\s]) : (\s)' => '\1\\\\:\2', // escape colons after cases
+    '\$this->' => '@', // $this to @
+    '\b self::' => '@@', // self to @@
+    '\. (?![=0-9])' => '..', // dots to double dots
+    '->' => '.', // arrows to dots
+    "({classId}) ::" => '\1.', // double colons to dots
+    "(^|[^\\\\]) \\$ ({varId} \b (?!\s*\() )" => '\1\2', // remove dolars
+    '(^|[^\s]) \s? => (\s)' => '\1:\2', // double arrows to colons
+    '<\?php \b' => '<?', //self::convert long opening tag to short tag
+    "({methodPrefix}) function \s+ ({varId} \s*\()" => '\1\2', // remove functions
+    '\\\\ \$' => '$', // unescape dollars before keywords
+  ];
+  protected static $tokens = // patterns for inline html, strings and comments
+    '{(?: \?> (?:[^<]|<[^?])* (<\?(?:php\b)?)? )
+      |(?: "[^"\\\\]*(?:\\\\.[^"\\\\]*)*" | \'[^\'\\\\]*(?:\\\\.[^\'\\\\]*)*\' )
+      |(?: //[^\n]*\n | /\* (?:[^*]|\*(?!/))* \*/) }Axs';
 
   public static function toPhp($input){
-    return self::convert($input, self::$patterns['toPhp']);
+    return self::convert($input, self::$toPhp);
   }
 
   public static function toLady($input){
-    return self::convert($input, self::$patterns['toLady']);
+    return self::convert($input, self::$toLady);
   }
 
+  /**
+   * Converts between php and ladyphp code.
+   */
   protected static function convert($input, $rules) {
-    $tokens = token_get_all(self::expandShortTags($input));
     $output = $code = '';
-    foreach (array_merge($tokens, [[null, null]]) as $token) {
-      if (is_array($token) && ($token[0] === null
-          || preg_match(self::$patterns['ignoredTokens'], token_name($token[0])))) {
-        $output .= self::convertCodeToken($code, $rules) . $token[1];
+    $input = '?>' . $input;
+    while (!empty($input) || !empty($code)) {
+      if (preg_match(self::$tokens, $input, $matches) || empty($input)) {
+        list($token, $phpTag) = $matches + array_fill(0, 2, '');
+        $token = $phpTag ? substr($token, 0, -strlen($phpTag)) : $token;
+        $output .= ($code ? self::convertCodeToken($code, $rules) : '') . $token;
+        $input = substr($input, strlen($token));
         $code = '';
       } else {
-        $code .= is_array($token) ? $token[1] : $token;
+        $code .= $input[0];
+        $input = substr($input, 1);
       }
     }
-    return $output;
+    return substr($output, 2);
   }
 
+  /**
+   * Applies rules to parts of code (without html, strings and comments)
+   */
   protected static function convertCodeToken($input, $rules) {
     $snippets = self::$patterns;
-    $rules += $snippets['trailingSpaces'];
-    $patterns = preg_replace_callback('~\{(\w+)\}~', function ($m) use ($snippets) {
+    $patterns = preg_replace_callback('~{(\w+)}~', function ($m) use ($snippets) {
       return $snippets[$m[1]];
     }, array_keys($rules));
     $patterns = preg_replace('{^.*$}s', '{\0}x', $patterns);
-    $output = '';
-    while (mb_strlen($input) > 0) {
-      preg_match(self::$patterns['codeAndString'], $input, $m);
-      $m += array_fill(0, 3, '');
-      $output .= preg_replace($patterns, $rules, $m[1]) . $m[2];
-      $input = mb_substr($input, mb_strlen($m[0]));
-      if (empty($m[0])) {
-        throw new Exception('Cannot parse code: ' . $input);
-      }
-    }
-    return $output;
-  }
-
-  protected static function expandShortTags($code) {
-    if (function_exists('ini_get') && ini_get('short_open_tag')) return $code;
-    do {
-      $tokens = token_get_all($code);
-      $tags = [['=', ' echo', 3], ['', '', 2]];
-      $code = $changed = null;
-      foreach ($tokens as $n => $token) {
-        if (!$changed && is_array($token) && $token[0] == T_INLINE_HTML) {
-          foreach ($tags as $tag) {
-            if (($pos = strpos($token[1], '<?'.$tag[0])) !== false) {
-              $space = preg_match('{^[\s\v]}', mb_substr($token[1], $pos + 2, 1)) ? '' : ' ';
-              $code .= substr_replace($token[1], '<?php'.$tag[1].$space, $pos, $tag[2]);
-              $changed = true;
-            }
-          }
-          $code .= $changed ? '' : $token[1];
-        } else {
-          $code .= is_array($token) ? $token[1] : $token;
-        }
-      }
-    } while ($changed);
-    return $code;
+    return preg_replace($patterns, $rules, $input);
   }
 }

@@ -1,7 +1,11 @@
 <?
 
+/*
+  Multiline
+  comment
+*/
 class Fruit {
-  private apples = 0;
+  private apples = 0; // we have nothing now
   private static numbers = [
     1: 'one',
     2: 'two',
@@ -42,7 +46,8 @@ anonym = function() use (fruit) {
 
 $anonym();
 
-echo "<p>" .. fruit.countApples() .. "</p>";
+?><p><? echo fruit.countApples() ?></p><?
+?><p><?= fruit.countApples() ?></p><?
 
 \@Cls.func();
 Cls.v;
