@@ -1,7 +1,7 @@
 all: rules phar test
 
 rules:
-	@./bin/build-rules
+	@./bin/update-rules
 
 phar:
 	@./bin/build-phar

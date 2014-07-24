@@ -1,7 +1,0 @@
-#!/usr/bin/env php
-<?php
-$inputFile = dirname(__DIR__) . '/src/rules.php';
-$outputFile = dirname(__DIR__) . '/js/rules.json';
-
-file_put_contents($outputFile, json_encode(require($inputFile)) . "\n");
-echo "File created: $outputFile\n";
