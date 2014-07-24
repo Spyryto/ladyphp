@@ -23,13 +23,6 @@ a .. b     │ a . b
 
 To write error control operator `@`, you have to escape it with `\`.
 
-## API
-
-```php
-string Lady::toPhp(string $ladyCode)
-string Lady::toLady(string $phpCode)
-```
-
 ## Usage from command line
 
 ```bash
@@ -38,11 +31,26 @@ ladyphp file.php   # creates file.lady
 ladyphp -w dir/    # watches directory and converts updated lady files
 ```
 
+## Usage from PHP
+
+```php
+require_once('./Lady.php');
+$php = Lady::toPhp($ladyCode)
+$lady = Lady::toLady($phpCode)
+```
+
+## Usage from NodeJS
+
+```javascript
+var lady = require('./lady');
+var php = lady.toPhp(ladyCode);
+var lady = lady.toLady(phpCode);
+```
+
 ## Todo
 
 - plugin for text editors that does bidirectional conversion
-- maybe: PHP method that can include .lady files with `Lady::requireFile('path/file.lady')`
-- maybe: PHP file stream that can include .lady files with `require('lady://path/file.lady')`
+- maybe include files with `Lady::requireFile('path/file.lady')`
 - add more syntactic sugar
 ```
 a ~ b  │ a . b
