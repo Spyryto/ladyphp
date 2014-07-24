@@ -20,10 +20,9 @@ class Lady {
       '\\.([^.=0-9])' => '->$1', // dots to arrows
       '\\.(\\.|->)' => '.', // duplicated dots to single dot
       '({classId}) ->' => '$1::', // arrows to two colons
-      '(^|[^>$\\\\]) ({varId} (?!\\() )' => '$1$$2', // add dollars
+      '(^|[^>$\\\\]) ({varId} (?!\s*\\() )' => '$1$$2', // add dollars
       '(^|[^\\\\]) \\$ ({keywords}) \\b' => '$1$2', // remove dollars from keywords
       '<\\?\\$php \\b' => '<?php', // remove dollars from opening tags
-      '(?m)^ (\\s* function \\s*) \\$' => '$1', // remove dollars from function names
       '(^|[^\\s\\\\]) : (\\s)' => '$1 =>$2', // colons to double arrows
       '(\\b case \\b [^\\v]*) \\s =>' => '$1:', // remove double arrows from cases
       '<\\? (?!php\\b|=)' => '<?php', // convert short opening tag to long tag

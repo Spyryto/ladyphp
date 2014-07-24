@@ -32,7 +32,7 @@ class Fruit {
     @self::staticMethod();
   }
 
-  public static function staticMethod() {
+  public static function staticMethod () {
     $try = (double) 0.42;
   }
 }
