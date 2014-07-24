@@ -1,7 +1,7 @@
 #!/usr/bin/env nodejs
 var fs = require('fs');
 var path = require('path');
-var lady = require('../src/lady');
+var lady = require('../js/lady');
 
 if (!process.argv[2]) {
   process.stderr.write("Usage: ladyphp.js FILE\n");

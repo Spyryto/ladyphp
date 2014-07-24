@@ -3,12 +3,11 @@
 class Lady {
   protected static $rules;
 
-  protected static function getRules($key = null) {
+  protected static function getRules($key) {
     if (!self::$rules) {
-      self::$rules = json_decode(file_get_contents(__DIR__ . '/rules.json'), true);
-      self::$rules['tokens'] = sprintf('{%s}xs', join("", self::$rules['tokens']));
+      self::$rules = require(__DIR__ . '/rules.php');
     }
-    return $key ? self::$rules[$key] : self::$rules;
+    return self::$rules[$key];
   }
 
   public static function toPhp($input){
@@ -25,8 +24,9 @@ class Lady {
   protected static function convert($input, $rules) {
     $output = $code = '';
     $input = '?>' . $input;
+    $tokensPattern = sprintf('{%s}x', self::getRules('tokens'));
     while (!empty($input) || !empty($code)) {
-      if (preg_match(self::getRules('tokens'), $input, $matches) || empty($input)) {
+      if (preg_match($tokensPattern, $input, $matches) || empty($input)) {
         list($token, $phpTag) = $matches + array_fill(0, 2, '');
         $token = $phpTag ? substr($token, 0, -strlen($phpTag)) : $token;
         $output .= ($code ? self::convertCodeToken($code, $rules) : '') . $token;

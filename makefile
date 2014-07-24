@@ -1,3 +1,11 @@
+all: rules phar test
+
+rules:
+	@./bin/build-rules
+
+phar:
+	@./bin/build-phar
+
 test: test-tophp test-tolady test-lint self-test test-jstophp test-jstolady
 
 test-tophp:
@@ -41,4 +49,4 @@ self-test:
 	@rm test/Lady.lady test/Lady.php test/Lady.diff
 	@echo 'PASSED'
 
-.PHONY: test
+.PHONY: all rules phar test self-test

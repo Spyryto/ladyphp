@@ -18,7 +18,7 @@ Lady.toRegExp = function(str) {
 Lady.convert = function (input, rules) {
   var output = '', code = '';
   input = '?>' + input;
-  var tokensPattern = Lady.toRegExp(Lady.rules.tokens.join(''));
+  var tokensPattern = Lady.toRegExp(Lady.rules.tokens);
   while (input || code) {
     var matches = tokensPattern.exec(input);
     if (matches || !input) {

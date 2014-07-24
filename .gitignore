@@ -1,3 +1,5 @@
 ladyphp.phar
 *.lady
 !/test/*.lady
+rules.json
+
