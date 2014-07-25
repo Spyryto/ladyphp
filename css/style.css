@@ -1,0 +1,46 @@
+body {
+  font-size: 18px;
+  font-family: "Droid Sans", "Helvetica", "Arial" sans-serif;
+}
+textarea.form-control{
+  font-family: "Droid Sans Mono", "Ubuntu Mono", monospace;
+  background: #1a1018;
+  color: white;
+  font-size: 15px;
+  min-width: 100%;
+  max-width: 100%;
+  min-height: 5em;
+  max-height: 60em;
+}
+h2 {
+  margin-top: 1em;
+}
+.title {
+  font-size: 300%;
+  margin: 1em 0;
+  color: white;
+}
+.title small {
+  color: #8a8088;
+}
+.top-stripe {
+  background: #1a1018;
+}
+.container {
+  max-width: 600pt;
+}
+.content-box {
+  padding-bottom: 4em;
+}
+.form-control:focus {
+  box-shadow: none;
+}
+.syntax-table>tbody>tr>td {
+  font-family: "Droid Sans Mono", "Ubuntu Mono", monospace;
+  font-size: 80%;
+  width: 50%;
+}
+.syntax-table>tbody>tr>th {
+  background: #888 !important;
+  color: white;
+}
