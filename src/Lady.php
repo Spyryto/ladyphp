@@ -23,7 +23,7 @@ class Lady {
       '(^|[^>$\\\\]) ({varId} (?!\s*\\() )' => '$1$$2', // add dollars
       '(^|[^\\\\]) \\$ ({keywords}) \\b' => '$1$2', // remove dollars from keywords
       '<\\?\\$php \\b' => '<?php', // remove dollars from opening tags
-      '(^|[^\\?\\s\\\\]) : (\\s)' => '$1 =>$2', // colons to double arrows
+      '(^|[^\\?:\\s\\\\]) : (\\s)' => '$1 =>$2', // colons to double arrows
       '(\\b (case|default) \\b [^\\v]*) \\s =>' => '$1:', // remove double arrows from cases
       '<\\? (?!php\\b|=)' => '<?php', // convert short opening tag to long tag
       '({methodPrefix}) ({varId} \\s*\\( )' => '$1function $2', // add functions

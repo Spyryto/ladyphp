@@ -7,18 +7,16 @@ Preprocessor for PHP, that allows you to write code with nicer syntax.
 ```
 Lady       │ PHP
 ───────────┼────────────────────
-var        │ $var
-obj.var    │ $obj->var
-obj.fx()   │ $obj->fx()
-@var       │ $this->var
-@fx()      │ $this->fx()
-@@var      │ self::$var
-@@fx()     │ self::fx()
-Cls.var    │ Cls::$var
-public a() │ public function a()
-<?         │ <?php
+x          │ $x
+obj.x      │ $obj->x
+Cls.x      │ Cls::$x
+@x         │ $this->x
+@@x        │ self::$x
+obj.f()    │ $obj->f()
+public f() │ public function f()
 [1: 2]     │ [1 => 2]
-a .. b     │ a . b
+x .. y     │ x . y
+<?         │ <?php
 ```
 
 To write error control operator `@`, you have to escape it with `\`.
