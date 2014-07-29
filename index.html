@@ -5,6 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <title>LadyPHP makes your code look beautiful</title>
+    <link href="favicon.png" rel="icon">
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet">
     <!--[if lt IE 9]>
@@ -15,16 +16,24 @@
   <body>
     <div class="container-fluid top-stripe">
       <div class="container">
-        <h1 class="title">LadyPHP<small> makes your code look beautiful</small></h1>
+        <div class="title-box media">
+          <div class="pull-left">
+            <img class="logo" src="logo.svg">
+          </div>
+          <div class="media-body">
+            <h1>LadyPHP</h1>
+            <h2>makes your code look beautiful</h2>
+          </div>
+        </div>
       </div>
     </div>
-    
+
     <div class="container content-box">
       <h2>Introduction</h2>
       <p>Do you also hate all these dollars, arrows and $this everywhere in you PHP files. Well, PHP just isn't the sexiest one when compared to other languages. But still you're not going to switch language just because the syntax, right? Now you can switch syntax without leaving the language, meet LadyPHP!</p>
-      <p>LadyPHP is a <abbr title="That's right, it's a preprocessor for preprocessor. Uhm... did I mentioned it's written in a preprocessor?">preprocessor for PHP</abbr>, that allows you to write code with cleaner syntax. It can do conversion in <strong>both ways</strong>, so you can start writing your current projects with lady syntax right away and save them back to PHP, your collaborators won't notice.</p>
-      <p>This software is <strong>still under development</strong>, but should be usable already. For now, the simplest usage is from command line, but there will be (hopefully) plugins for text editors (and IDEs) with transparent conversion.</p>
-      
+      <p>LadyPHP is a <abbr title="That's right, it's a preprocessor for preprocessor. Uhm... did I mention it's written in a preprocessor?">preprocessor for PHP</abbr>, that allows you to write code with cleaner syntax. It can do conversion in <strong>both ways</strong>, so you can start writing your current projects with lady syntax right away and save them back to PHP, your collaborators won't notice.</p>
+      <p>This software is <strong>still under development</strong>, but should be usable already. For now, the simplest usage is from command line, but there will be plugins for text editors (and IDEs) with transparent conversion.</p>
+
       <h2>Live demo</h2>
       <p>You can try LadyPHP right in your browser. Conversion works in both ways.</p>
       <div class="row">
@@ -51,34 +60,66 @@ v.addPerson('Stone');
           <textarea id="php" class="form-control" rows="16"></textarea>
         </div>
       </div>
-      
+
       <h2>Download</h2>
       <p>You can find latest source code of <a href="http://github.com/unu/ladyphp">LadyPHP on GitHub</a>.</p>
-      
+
       <h2>Syntax reference</h2>
       <div class="row">
         <div class="col-sm-8">
           <table class="table table-striped table-condensed table-bordered syntax-table">
             <tr><th>LadyPHP</th><th>PHP</th></tr>
-            <tr><td>var</td><td>$var</td></tr>
-            <tr><td>obj.var</td><td>$obj->var</td></tr>
-            <tr><td>Cls.var</td><td>Cls::$var</td></tr>
-            <tr><td>@var</td><td>$this->var</td></tr>
-            <tr><td>@@var</td><td>self::$var</td></tr>
-            <tr><td>obj.fx()</td><td>$obj->fx()</td></tr>
-            <tr><td>public a()</td><td>public function a()</td></tr>
+            <tr><td>x</td><td>$x</td></tr>
+            <tr><td>obj.x</td><td>$obj->x</td></tr>
+            <tr><td>Cls.x</td><td>Cls::$x</td></tr>
+            <tr><td>@x</td><td>$this->x</td></tr>
+            <tr><td>@@x</td><td>self::$x</td></tr>
+            <tr><td>obj.f()</td><td>$obj->f()</td></tr>
+            <tr><td>public f()</td><td>public function f()</td></tr>
             <tr><td>[1: 2]</td><td>[1 => 2]</td></tr>
-            <tr><td>a .. b</td><td>a . b</td></tr>
+            <tr><td>x .. y</td><td>x . y</td></tr>
             <tr><td>&lt;?</td><td>&lt;?php</td></tr>
           </table>
         </div>
       </div>
-      
+      <p>To write error control operator <code>@</code>, you have to escape it with <code>\</code>.</p>
+
+      <h2>Usage from command line</h2>
+
+      <pre>
+ladyphp file.lady  # creates file.php
+ladyphp file.php   # creates file.lady
+ladyphp -r dir/    # converts all php files in directory to ladyphp
+ladyphp -w dir/    # watches directory and converts updated lady files
+</pre>
+
+      <h2>Usage from PHP</h2>
+
+      <pre>
+require_once('./Lady.php'); # or load it via Composer
+$php = Lady::toPhp($ladyCode);
+$lady = Lady::toLady($phpCode);
+</pre>
+
+      <h2>Usage from JavaScript</h2>
+
+      <pre>
+var Lady = require('./lady'); # or load it via &lt;script&gt; tag
+var php = Lady.toPhp(ladyCode);
+var lady = Lady.toLady(phpCode);
+</pre>
+
+      <h2>Credits</h2>
+      <p>LadyPHP is created by <a href="http://honzanovak.com">Honza Novák</a> and it's licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons CC-BY-SA</a>.
+
     </div>
+    <div class="footer-stripe container-fluid">
+      <div class="footer container">
+        <p><a href="http://honzanovak.com">Honza Novák</a> &copy; 2014 | Powered by <a href="http://github.com">Github</a> and <a href="http://getbootstrap.com">Bootstrap</a></p>
+      </div>
+    </div>
+
     <script src="js/lady.js"></script>
     <script src="js/main.js"></script>
-    <script src="js/jquery.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script src="../../ultimo/src/ultimo.js"></script>
   </body>
 </html>

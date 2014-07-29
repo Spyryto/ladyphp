@@ -2,8 +2,16 @@ body {
   font-size: 18px;
   font-family: "Droid Sans", "Helvetica", "Arial" sans-serif;
 }
-textarea.form-control{
+textarea.form-control,
+.syntax-table>tbody>tr>td,
+pre {
   font-family: "Droid Sans Mono", "Ubuntu Mono", monospace;
+}
+p {
+  color: #444;
+  line-height: 1.9;
+}
+textarea.form-control{
   background: #1a1018;
   color: white;
   font-size: 15px;
@@ -15,16 +23,32 @@ textarea.form-control{
 h2 {
   margin-top: 1em;
 }
-.title {
-  font-size: 300%;
-  margin: 1em 0;
-  color: white;
-}
-.title small {
-  color: #8a8088;
+pre {
+  font-size: 15px;
 }
 .top-stripe {
-  background: #1a1018;
+  background: #AA1111;
+  border-bottom: 10pt solid #ddd;
+}
+.title-box {
+  padding: 2em 0;
+}
+.title-box h1 {
+  margin: 0;
+  font-size: 250%;
+  color: white;
+}
+.title-box h2 {
+  color: white;
+  opacity: .6;
+  margin: 0;
+  font-size: 130%;
+}
+.title-box .media-body {
+  margin-top: 1em;
+}
+.logo {
+  height: 6em;
 }
 .container {
   max-width: 600pt;
@@ -36,11 +60,25 @@ h2 {
   box-shadow: none;
 }
 .syntax-table>tbody>tr>td {
-  font-family: "Droid Sans Mono", "Ubuntu Mono", monospace;
   font-size: 80%;
   width: 50%;
+  border-color: #888;
 }
 .syntax-table>tbody>tr>th {
-  background: #888 !important;
+  background: #1a1018 !important;
   color: white;
+  border-color: #888;
+}
+.footer-stripe {
+  background: #eee;
+  border-top: 1px solid #aaa;
+}
+.footer p {
+  margin: 2em 0;
+  color: #888;
+  font-size: 80%;
+  text-align: center;
+}
+.footer a {
+  color: #888;
 }

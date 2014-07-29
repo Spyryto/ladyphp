@@ -13,7 +13,7 @@ function convert(toLady) {
     processing = false;
   }
 }
-convert();
+convert(false);
 
 ladyBox.onkeyup = function(){ convert(false); };
 phpBox.onkeyup = function(){ convert(true); };
