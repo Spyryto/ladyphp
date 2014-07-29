@@ -1,11 +1,12 @@
 body {
   font-size: 18px;
-  font-family: "Droid Sans", "Helvetica", "Arial" sans-serif;
+  font-family: "Ubuntu", "Helvetica", "Arial", sans-serif;
 }
 textarea.form-control,
 .syntax-table>tbody>tr>td,
 pre, code {
-  font-family: "Droid Sans Mono", "Ubuntu Mono", monospace;
+  font-family: "Ubuntu Mono", monospace;
+  font-size: 16px;
 }
 p {
   color: #444;
@@ -14,7 +15,6 @@ p {
 textarea.form-control{
   background: #1a1018;
   color: white;
-  font-size: 15px;
   min-width: 100%;
   max-width: 100%;
   min-height: 5em;
@@ -22,15 +22,16 @@ textarea.form-control{
 }
 h2 {
   margin-top: 1em;
-}
-pre {
-  font-size: 15px;
+  font-weight: 400;
 }
 a {
   color: #a11;
 }
 a:hover {
   color: #d33;
+}
+strong {
+  font-weight: 500;
 }
 .top-stripe {
   background: #a11;
@@ -39,16 +40,17 @@ a:hover {
 .title-box {
   padding: 2em 0;
 }
-.title-box h1 {
+.title-box h1, .title-box h2 {
   margin: 0;
-  font-size: 250%;
   color: white;
+  font-weight: 300;
+}
+.title-box h1 {
+  font-size: 250%;
 }
 .title-box h2 {
-  color: white;
-  opacity: .6;
-  margin: 0;
   font-size: 130%;
+  opacity: .6;
 }
 .title-box .media-body {
   margin-top: 1em;
@@ -66,7 +68,6 @@ a:hover {
   box-shadow: none;
 }
 .syntax-table>tbody>tr>td {
-  font-size: 80%;
   width: 50%;
   border-color: #888;
 }
