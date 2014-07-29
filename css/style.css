@@ -4,7 +4,7 @@ body {
 }
 textarea.form-control,
 .syntax-table>tbody>tr>td,
-pre {
+pre, code {
   font-family: "Droid Sans Mono", "Ubuntu Mono", monospace;
 }
 p {
@@ -26,8 +26,14 @@ h2 {
 pre {
   font-size: 15px;
 }
+a {
+  color: #a11;
+}
+a:hover {
+  color: #d33;
+}
 .top-stripe {
-  background: #AA1111;
+  background: #a11;
   border-bottom: 10pt solid #ddd;
 }
 .title-box {
