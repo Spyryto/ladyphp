@@ -36,7 +36,7 @@ class Lady {
       '(->) \\$' => '$1\\\\$', // escape dollars before dynamic properties
       '\\$\\$' => '\\\\$\\\\$', // escape dollars before dynamic variables
       '\\$ ({keywords}) \\b' => '\\\\$$1', // escape dollars before keywords
-      '(?m) (^|[^\\s\?]) : (\\s)' => '$1\\:$2', // escape colons after cases
+      '(^|[^\\s\?]) : (\\s)' => '$1\\:$2', // escape colons after cases
       '\\$this->' => '@', // $this to @
       '\\b self::' => '@@', // self to @@
       '\\. (?![=0-9])' => '..', // dots to double dots
