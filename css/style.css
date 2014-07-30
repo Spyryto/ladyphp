@@ -12,15 +12,7 @@ p {
   color: #444;
   line-height: 1.9;
 }
-textarea.form-control{
-  background: #1a1018;
-  color: white;
-  min-width: 100%;
-  max-width: 100%;
-  min-height: 5em;
-  max-height: 60em;
-}
-h2 {
+h2, h3 {
   margin-top: 1em;
   font-weight: 400;
 }
@@ -32,6 +24,22 @@ a:hover {
 }
 strong {
   font-weight: 500;
+}
+::selection {
+  color: white;
+  background: #a11;
+}
+::-moz-selection {
+  color: white;
+  background: #a11;
+}
+.top-stripe ::selection {
+  color: #a11;
+  background: white;
+}
+.top-stripe ::-moz-selection {
+  color: #a11;
+  background: white;
 }
 .top-stripe {
   background: #a11;
@@ -59,26 +67,39 @@ strong {
   height: 6em;
 }
 .container {
-  max-width: 600pt;
+  max-width: 38em;
 }
 .content-box {
   padding-bottom: 4em;
+}
+.demo {
+  padding: 1em .1em;
+}
+.demo div {
+  padding: .5em;
+}
+textarea.form-control{
+  background: #fafafa;
+  font-size: 15px;
+  padding: .3em .5em;
+  min-width: 100%;
+  max-width: 100%;
+  min-height: 5em;
+  max-height: 60em;
 }
 .form-control:focus {
   box-shadow: none;
 }
 .syntax-table>tbody>tr>td {
   width: 50%;
-  border-color: #888;
 }
 .syntax-table>tbody>tr>th {
-  background: #1a1018 !important;
-  color: white;
-  border-color: #888;
+  background: #ddd !important;
+  font-weight: 500;
 }
 .footer-stripe {
   background: #eee;
-  border-top: 1px solid #aaa;
+  border-top: 1px solid #ccc;
 }
 .footer p {
   margin: 2em 0;
