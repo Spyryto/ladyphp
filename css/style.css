@@ -44,9 +44,11 @@ strong {
 .top-stripe {
   background: #a11;
   border-bottom: 10pt solid #ddd;
+  overflow: hidden;
 }
 .title-box {
-  padding: 2em 0;
+  padding: 2.8em 0;
+  position: relative;
 }
 .title-box h1, .title-box h2 {
   margin: 0;

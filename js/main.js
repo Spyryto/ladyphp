@@ -31,3 +31,9 @@ ladyBox.onkeyup = function(){ convert(false); };
 phpBox.onkeyup = function(){ convert(true); };
 ladyBox.onchange = ladyBox.onkeyup;
 phpBox.onchange = phpBox.onkeyup;
+
+document.onscroll = function() {
+  var titleBox = document.getElementById('title-box');
+  var top = (window.pageYOffset || document.documentElement.scrollTop);
+  titleBox.style.top = (top * .2) + 'px';
+};
