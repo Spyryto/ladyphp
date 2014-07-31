@@ -15,6 +15,7 @@ p {
 h2, h3 {
   margin-top: 1em;
   font-weight: 400;
+  font-size: 150%;
 }
 a {
   color: #a11;
@@ -111,4 +112,21 @@ textarea.form-control{
 }
 .footer a {
   color: #888;
+}
+
+@media (max-width: 400px) {
+  body {
+    font-size: 16px;
+  }
+  textarea.form-control,
+  .syntax-table>tbody>tr>td,
+  pre, code {
+    font-size: 14px;
+  }
+  .title-box h1 {
+    font-size: 160%;
+  }
+  .title-box h2 {
+    font-size: 120%;
+  }
 }

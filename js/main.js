@@ -35,5 +35,5 @@ phpBox.onchange = phpBox.onkeyup;
 document.onscroll = function() {
   var titleBox = document.getElementById('title-box');
   var top = (window.pageYOffset || document.documentElement.scrollTop);
-  titleBox.style.top = (top * .2) + 'px';
+  titleBox.style.top = (top * 0.2) + 'px';
 };
