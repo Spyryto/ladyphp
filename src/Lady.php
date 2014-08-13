@@ -24,19 +24,17 @@ class Lady {
       '(^|[^\\\\]) \\$ ({keywords}) \\b' => '$1$2', // remove dollars from keywords
       '<\\?\\$php \\b' => '<?php', // remove dollars from opening tags
       '(^|[^\\?:\\s\\\\]) : (\\s)' => '$1 =>$2', // colons to double arrows
-      '(\\b (case|default) \\b [^\\v]*) \\s =>' => '$1:', // remove double arrows from cases
+      '(\\b (case|default) \\b [^\\n]*) \\s \\=>' => '$1:', // remove double arrows from cases
       '<\\? (?!php\\b|=)' => '<?php', // convert short opening tag to long tag
       '({methodPrefix}) ({varId} \\s*\\( )' => '$1function $2', // add functions
       '\\\\@' => '@', // unescape @
       '\\\\ \\$' => '$', // unescape dollars
-      '\\\\:' => ':', // unescape colons
     ],
     'toLady' => [
       '@' => '\\@', // escape @
       '(->) \\$' => '$1\\\\$', // escape dollars before dynamic properties
       '\\$\\$' => '\\\\$\\\\$', // escape dollars before dynamic variables
       '\\$ ({keywords}) \\b' => '\\\\$$1', // escape dollars before keywords
-      '(^|[^\\s\?]) : (\\s)' => '$1\\:$2', // escape colons after cases
       '\\$this->' => '@', // $this to @
       '\\b self::' => '@@', // self to @@
       '\\. (?![=0-9])' => '..', // dots to double dots
@@ -49,7 +47,7 @@ class Lady {
       '\\\\ \\$' => '$', // unescape dollars before keywords
     ],
     // patterns for inline html, strings and comments
-    'tokens' => '^(?: (?: \\?> (?:[^<]|<[^?])* (<\\?(?:php\\b)?)? )
+    'tokens' => '(?: (?: (?:^|\\?>) (?:[^<]|<[^?])* (<\\?(?:php\\b)?)? )
       |(?: "[^"\\\\]*(?:\\\\[\\s\\S][^"\\\\]*)*" | \'[^\'\\\\]*(?:\\\\[\\s\\S][^\'\\\\]*)*\' )
       |(?: (?://|\#)[^\\n]*\\n | /\\* (?:[^*]|\\*(?!/))* \\*/) )',
   ];
@@ -65,33 +63,20 @@ class Lady {
   /**
    * Converts between php and ladyphp code.
    */
-  protected static function convert($input, $rules) {
-    $output = $code = '';
-    $input = '?>' . $input;
+  protected static function convert($code, $rules) {
+    $strings = [];
     $tokensPattern = sprintf('{%s}x', self::$rules['tokens']);
-    while (!empty($input) || !empty($code)) {
-      if (preg_match($tokensPattern, $input, $matches) || empty($input)) {
-        list($token, $phpTag) = $matches + array_fill(0, 2, '');
-        $token = $phpTag ? substr($token, 0, -strlen($phpTag)) : $token;
-        $output .= ($code ? self::convertCodeToken($code, $rules) : '') . $token;
-        $input = substr($input, strlen($token));
-        $code = '';
-      } else {
-        $code .= $input[0];
-        $input = substr($input, 1);
-      }
-    }
-    return substr($output, 2);
-  }
-
-  /**
-   * Applies rules to parts of code (without html, strings and comments)
-   */
-  protected static function convertCodeToken($input, $rules) {
+    $code = preg_replace_callback($tokensPattern, function ($m) use (&$strings) {
+      $strings[] = isset($m[1]) ? substr($m[0], 0, -strlen($m[1])) : $m[0];
+      return '""' . (isset($m[1]) ? $m[1] : '');
+    }, $code);
     $patterns = preg_replace_callback('~{(\w+)}~', function ($m) {
       return self::$rules[$m[1]];
     }, array_keys($rules));
     $patterns = preg_replace('{^.*$}s', '{\0}x', $patterns);
-    return preg_replace($patterns, $rules, $input);
+    $code = preg_replace($patterns, $rules, $code);
+    return preg_replace_callback('{""}', function ($m) use (&$strings) {
+      return array_shift($strings);
+    }, $code);
   }
 }
