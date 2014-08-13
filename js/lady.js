@@ -1,5 +1,5 @@
 var Lady = {};
-Lady.rules = {"keywords":"abstract|and|as|break|callable|case|catch|class|clone|const|continue|declare|default|do|echo|else(if)?|end(declare|for(each)?|if|switch|while)?|extends|false|final|for(each)?|function|global|goto|if|implements|include(_once)?|instanceof|insteadof|interface|namespace|new|null|or|parent|print|private|protected|public|require(_once)?|return|self|static|switch|throw|trait|true|try|use|var|while|xor|yield|array|binary|bool(ean)?|double|float|int(eger)?|object|real|string|unset","methodPrefix":"\\b(?:private|protected|public)(?:\\s+static)?\\s+","classId":"(^|[^>$]|[^-]>)\\b(?:self|static|parent|[A-Z]\\w*|_+[A-Z])\\b","varId":"\\b(?:[a-z]\\w*|_+[a-z]\\w*|GLOBALS|_SERVER|_REQUEST|_POST|_GET|_FILES|_ENV|_COOKIE|_SESSION)\\b","toPhp":{"\\$":"\\\\$","(^|[^\\\\])@@":"$1self::","(^|[^\\\\])@":"$1$this->","\\.([^.=0-9])":"->$1","\\.(\\.|->)":".","({classId})->":"$1::","(^|[^>$\\\\])({varId}(?!\\s*\\())":"$1$$2","(^|[^\\\\])\\$({keywords})\\b":"$1$2","<\\?\\$php\\b":"<?php","(^|[^\\?:\\s\\\\]):(\\s)":"$1 =>$2","(\\b(case|default)\\b[^\\v]*)\\s =>":"$1:","<\\?(?!php\\b|=)":"<?php","({methodPrefix})({varId}\\s*\\()":"$1function $2","\\\\@":"@","\\\\\\$":"$","\\\\:":":"},"toLady":{"@":"\\@","(->)\\$":"$1\\\\$","\\$\\$":"\\\\$\\\\$","\\$({keywords})\\b":"\\\\$$1","(^|[^\\s\\?]):(\\s)":"$1\\:$2","\\$this->":"@","\\bself::":"@@","\\.(?![=0-9])":"..","->":".","({classId})::":"$1.","(^|[^\\\\])\\$({varId}\\b(?!\\s*\\())":"$1$2","(^|[^\\s])\\s? =>(\\s)":"$1:$2","<\\?php\\b":"<?","({methodPrefix})function\\s+({varId}\\s*\\()":"$1$2","\\\\\\$":"$"},"tokens":"^(?:(?:\\?>(?:[^<]|<[^?])*(<\\?(?:php\\b)?)?)|(?:\"[^\"\\\\]*(?:\\\\[\\s\\S][^\"\\\\]*)*\"|'[^'\\\\]*(?:\\\\[\\s\\S][^'\\\\]*)*')|(?:(?:\/\/|\\#)[^\\n]*\|\/\\*(?:[^*]|\\*(?!\/))*\\*\/))"};
+Lady.rules = {"keywords":"abstract|and|as|break|callable|case|catch|class|clone|const|continue|declare|default|do|echo|else(if)?|end(declare|for(each)?|if|switch|while)?|extends|false|final|for(each)?|function|global|goto|if|implements|include(_once)?|instanceof|insteadof|interface|namespace|new|null|or|parent|print|private|protected|public|require(_once)?|return|self|static|switch|throw|trait|true|try|use|var|while|xor|yield|array|binary|bool(ean)?|double|float|int(eger)?|object|real|string|unset","methodPrefix":"\\b(?:private|protected|public)(?:\\s+static)?\\s+","classId":"(^|[^>$]|[^-]>)\\b(?:self|static|parent|[A-Z]\\w*|_+[A-Z])\\b","varId":"\\b(?:[a-z]\\w*|_+[a-z]\\w*|GLOBALS|_SERVER|_REQUEST|_POST|_GET|_FILES|_ENV|_COOKIE|_SESSION)\\b","toPhp":{"\\$":"\\\\$","(^|[^\\\\])@@":"$1self::","(^|[^\\\\])@":"$1$this->","\\.([^.=0-9])":"->$1","\\.(\\.|->)":".","({classId})->":"$1::","(^|[^>$\\\\])({varId}(?!\\s*\\())":"$1$$2","(^|[^\\\\])\\$({keywords})\\b":"$1$2","<\\?\\$php\\b":"<?php","(^|[^\\?:\\s\\\\]):(\\s)":"$1 =>$2","(\\b(case|default)\\b[^\\n]*)\\s\\=>":"$1:","<\\?(?!php\\b|=)":"<?php","({methodPrefix})({varId}\\s*\\()":"$1function $2","\\\\@":"@","\\\\\\$":"$"},"toLady":{"@":"\\@","(->)\\$":"$1\\\\$","\\$\\$":"\\\\$\\\\$","\\$({keywords})\\b":"\\\\$$1","\\$this->":"@","\\bself::":"@@","\\.(?![=0-9])":"..","->":".","({classId})::":"$1.","(^|[^\\\\])\\$({varId}\\b(?!\\s*\\())":"$1$2","(^|[^\\s])\\s? =>(\\s)":"$1:$2","<\\?php\\b":"<?","({methodPrefix})function\\s+({varId}\\s*\\()":"$1$2","\\\\\\$":"$"},"tokens":"(?:(?:(?:^|\\?>)(?:[^<]|<[^?])*(<\\?(?:php\\b)?)?)|(?:\"[^\"\\\\]*(?:\\\\[\\s\\S][^\"\\\\]*)*\"|'[^'\\\\]*(?:\\\\[\\s\\S][^'\\\\]*)*')|(?:(?:\/\/|\\#)[^\\n]*\|\/\\*(?:[^*]|\\*(?!\/))*\\*\/))"};
 
 Lady.toPhp = function(input) {
   return Lady.convert(input, Lady.rules.toPhp);
@@ -9,38 +9,25 @@ Lady.toLady = function(input) {
   return Lady.convert(input, Lady.rules.toLady);
 };
 
-Lady.convert = function (input, rules) {
-  var output = '', code = '';
-  input = '?>' + input;
+Lady.convert = function(code, rules) {
+  var strings = [];
   var tokensPattern = new RegExp(Lady.rules.tokens, 'g');
-  while (input || code) {
-    var matches = tokensPattern.exec(input);
-    if (matches || !input) {
-      var token = (matches && matches[0]) ? matches[0] : '';
-      var phpTag = (matches && matches[1]) ? matches[1] : '';
-      token = phpTag ? token.substr(0, token.length - phpTag.length) : token;
-      output += (code ? Lady.convertCode(code, rules) : '') + token;
-      input = input.substr(token.length);
-      code = '';
-    } else {
-      code += input[0];
-      input = input.substr(1);
-    }
-  }
-  return output.substr(2);
-};
-
-Lady.convertCode = function(input, rules) {
-  var expand = function(s, id) { return Lady.rules[id]; };
-  var replaceParts = function(x, a, b) {
-    return replacement.replace(/\$1/, a).replace(/\$2/, b);
-  };
+  code = code.toString().replace(tokensPattern, function (string, phpTag) {
+    strings.push(phpTag ? string.substr(0, string.length - phpTag.length) : string);
+    return '""' + (phpTag ? phpTag : '');
+  });
   for (var i in rules) {
-    var pattern = new RegExp(i.replace(/{(\w+)}/g, expand), 'g');
+    var pattern = new RegExp(i.replace(/{(\w+)}/g, function(s, id) {
+      return Lady.rules[id];
+    }), 'g');
     var replacement = rules[i].replace(/\\\$/, '$');
-    input = input.replace(pattern, replaceParts);
+    code = code.replace(pattern, function(x, a, b) {
+      return replacement.replace(/\$1/, a).replace(/\$2/, b);
+    });
   }
-  return input;
+  return code.replace(/""/g, function () {
+    return strings.shift();
+  });
 };
 
 if (typeof module !== 'undefined') {
