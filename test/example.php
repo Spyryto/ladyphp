@@ -52,3 +52,4 @@ $anonym();
 @Cls::func();
 Cls::$v;
 $a = $a ?: $b;
+$a = ~$b;

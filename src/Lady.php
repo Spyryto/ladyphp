@@ -18,7 +18,7 @@ class Lady {
       '(^|[^\\\\]) @@' => '$1self::', // @@ to self
       '(^|[^\\\\]) @' => '$1$this->', // @ to $this
       '\\.([^.=0-9])' => '->$1', // dots to arrows
-      '\\.(\\.|->)' => '.', // duplicated dots to single dot
+      '(^|[^\\\\]) ~' => '$1.', // tilde to single dot
       '({classId}) ->' => '$1::', // arrows to two colons
       '(^|[^>$\\\\]) ({varId} (?!\s*\\() )' => '$1$$2', // add dollars
       '(^|[^\\\\]) \\$ ({keywords}) \\b' => '$1$2', // remove dollars from keywords
@@ -27,17 +27,16 @@ class Lady {
       '(\\b (case|default) \\b [^\\n]*) \\s \\=>' => '$1:', // remove double arrows from cases
       '<\\? (?!php\\b|=)' => '<?php', // convert short opening tag to long tag
       '({methodPrefix}) ({varId} \\s*\\( )' => '$1function $2', // add functions
-      '\\\\@' => '@', // unescape @
-      '\\\\ \\$' => '$', // unescape dollars
+      '\\\\([~@$])' => '$1', // unescape @, tildes and dollars
     ],
     'toLady' => [
-      '@' => '\\@', // escape @
+      '([@~])' => '\\\\$1', // escape @ and tildes
       '(->) \\$' => '$1\\\\$', // escape dollars before dynamic properties
       '\\$\\$' => '\\\\$\\\\$', // escape dollars before dynamic variables
       '\\$ ({keywords}) \\b' => '\\\\$$1', // escape dollars before keywords
       '\\$this->' => '@', // $this to @
       '\\b self::' => '@@', // self to @@
-      '\\. (?![=0-9])' => '..', // dots to double dots
+      '\\. (?![=0-9])' => '~', // dots to tilde
       '->' => '.', // arrows to dots
       '({classId}) ::' => '$1.', // double colons to dots
       '(^|[^\\\\]) \\$ ({varId} \\b (?!\\s*\\() )' => '$1$2', // remove dolars

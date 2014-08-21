@@ -24,7 +24,7 @@ class Fruit {
     out .= isset(@@numbers[@apples]) ? @@numbers[@apples] : @apples;
     switch (@apples) {
       case 1:
-        return out .. ' apple.';
+        return out ~ ' apple.';
       default:
         return "$out apples.";
     }
@@ -52,3 +52,4 @@ $anonym();
 \@Cls.func();
 Cls.v;
 a = a ?: b;
+a = \~b;

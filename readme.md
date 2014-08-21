@@ -4,6 +4,4 @@
 
 ### Todo
 - plugins for text editors that does bidirectional conversion
-- more syntactic sugar
-      a ~ b   →  a . b
-      [a: b]  →  array('a' => 'b')
+- shorter array syntax `[a: 'b'] → array('a' => 'b')`
