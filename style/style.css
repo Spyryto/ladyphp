@@ -13,15 +13,18 @@ p {
   line-height: 1.9;
 }
 h2, h3 {
-  margin-top: 1em;
-  font-weight: 400;
-  font-size: 150%;
+  margin: 1em 0 .5em;
+  font-weight: 300;
+  font-size: 180%;
 }
 a {
   color: #a11;
 }
 a:hover {
   color: #d33;
+}
+a:focus{
+  color: #600;
 }
 strong {
   font-weight: 500;
@@ -43,7 +46,8 @@ strong {
   background: white;
 }
 .top-stripe {
-  background: #a11;
+  background: #a11 url("background.jpg") 0 center;
+  background-size: cover;
   border-bottom: 10pt solid #ddd;
   overflow: hidden;
 }
@@ -68,6 +72,9 @@ strong {
 }
 .logo {
   height: 6em;
+  width: 4.3em;
+  background: url("logo.svg") no-repeat;
+  background-size: contain;
 }
 .container {
   max-width: 38em;
@@ -114,7 +121,7 @@ textarea.form-control{
   color: #888;
 }
 
-@media (max-width: 400px) {
+@media (max-width: 550px) {
   body {
     font-size: 16px;
   }
