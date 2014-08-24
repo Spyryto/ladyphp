@@ -13,6 +13,8 @@ class Lady {
     'classId' => '(^|[^>$]|[^-]>) \\b(?:self|static|parent|[A-Z]\\w*|_+[A-Z])\\b',
     'varId' => '\\b (?:[a-z]\\w*|_+[a-z]\\w*|GLOBALS|_SERVER|_REQUEST|_POST|_GET
       |_FILES|_ENV|_COOKIE|_SESSION) \\b',
+    'closure' => '(^|[^.$])\bfunction\b[\s\']*\(',
+    'statementEnd' => '[\s\']* (\n|$)(?![\s\']*[\])\.\-\+:=/%*&|>,\{?]|<[^?]|and|or|xor)',
     'toPhp' => [
       '\\$' => '\\\\$', // escape dollars
       '(^|[^\\\\]) @@' => '$1self::', // @@ to self
@@ -20,7 +22,7 @@ class Lady {
       '\\.([^.=0-9])' => '->$1', // dots to arrows
       '(^|[^\\\\]) ~' => '$1.', // tilde to single dot
       '({classId}) ->' => '$1::', // arrows to two colons
-      '([\w"\]\)])([\s\']* (\n|$)(?![\s\']*[\])\.\-\+:=/%*&|>,]|<[^?]))' => '$1;$2', // add trailing semicolons
+      '([\w"\]\)\-+])({statementEnd})' => '$1;$2', // add trailing semicolons
       '(^|[^>$\\\\]) ({varId} (?!\s*\\() )' => '$1$$2', // add dollars
       '(^|[^\\\\]) \\$ ({keywords}) \\b' => '$1$2', // remove dollars from keywords
       '<\\?\\$php;? \\b' => '<?php', // remove dollars from opening tags
@@ -74,7 +76,7 @@ class Lady {
     $closureBrackets = [];
     $code = preg_replace_callback('/([^{}]*)([{}])/x', function ($m) use (&$closureBrackets) {
       if ($m[2] == '{') {
-        $closureBrackets[] = preg_match('/\b function \b[\s\']* \(/x', $m[1]) == 1;
+        $closureBrackets[] = preg_match('{'.self::$rules['closure'].'}x', $m[1]) == 1;
         return $m[0];
       } else {
         return $m[1] . (array_pop($closureBrackets) ? '"}"' : '}');
