@@ -40,12 +40,12 @@ class Village {
     2: 'Stone'
   ];
   public addPerson(name) {
-    @people[] = name;
+    @people[] = name
   }
 }
 
-v = new Village();
-v.addPerson('Stone');
+v = new Village()
+v.addPerson('Stone')
 </textarea>
         </div>
         <div class="col-sm-6">
@@ -60,7 +60,7 @@ v.addPerson('Stone');
       <p>This software is <strong>still under development</strong>, but should be usable already. For now, the simplest usage is from command line, but there will be plugins for text editors (and IDEs) with transparent conversion.</p>
 
       <h2>Download</h2>
-      <p>You can find latest source code of <a href="http://github.com/unu/ladyphp">LadyPHP on GitHub</a>.</p>
+      <p>Get source code on <a href="http://github.com/unu/ladyphp">GitHub</a> or download executable PHP archive <a href="ladyphp.phar">ladyphp.phar</a>.</p>
 
       <h2>Syntax reference</h2>
       <div class="row">
@@ -75,12 +75,13 @@ v.addPerson('Stone');
             <tr><td>obj.f()</td><td>$obj->f()</td></tr>
             <tr><td>public f()</td><td>public function f()</td></tr>
             <tr><td>[1: 2]</td><td>[1 => 2]</td></tr>
-            <tr><td>x .. y</td><td>x . y</td></tr>
+            <tr><td>x ~ y</td><td>x . y</td></tr>
             <tr><td>&lt;?</td><td>&lt;?php</td></tr>
           </table>
         </div>
       </div>
-      <p>To write error control operator <code>@</code>, you have to escape it with <code>\</code>.</p>
+      <p>Semicolons at the end of lines are optional.</p>
+      <p>To write operators <code>@</code> and <code>~</code>, you have to escape them with <code>\</code>.</p>
 
       <h2>Usage from command line</h2>
 
@@ -89,22 +90,6 @@ ladyphp file.lady  # creates file.php
 ladyphp file.php   # creates file.lady
 ladyphp -r dir/    # converts all php files in directory to ladyphp
 ladyphp -w dir/    # watches directory and converts updated lady files
-</pre>
-
-      <h2>Usage from PHP</h2>
-
-      <pre>
-require_once('./Lady.php'); # or load it via Composer
-$php = Lady::toPhp($ladyCode);
-$lady = Lady::toLady($phpCode);
-</pre>
-
-      <h2>Usage from JavaScript</h2>
-
-      <pre>
-var Lady = require('./lady'); # or load it via &lt;script&gt; tag
-var php = Lady.toPhp(ladyCode);
-var lady = Lady.toLady(phpCode);
 </pre>
 
       <h2>Credits</h2>
