@@ -20,9 +20,10 @@ class Lady {
       '\\.([^.=0-9])' => '->$1', // dots to arrows
       '(^|[^\\\\]) ~' => '$1.', // tilde to single dot
       '({classId}) ->' => '$1::', // arrows to two colons
+      '([\w"\]\)])([\s\']* (\n|$)(?![\s\']*[\])\.\-\+:=/%*&|>,]|<[^?]))' => '$1;$2', // add trailing semicolons
       '(^|[^>$\\\\]) ({varId} (?!\s*\\() )' => '$1$$2', // add dollars
       '(^|[^\\\\]) \\$ ({keywords}) \\b' => '$1$2', // remove dollars from keywords
-      '<\\?\\$php \\b' => '<?php', // remove dollars from opening tags
+      '<\\?\\$php;? \\b' => '<?php', // remove dollars from opening tags
       '(^|[^\\?:\\s\\\\]) : (\\s)' => '$1 =>$2', // colons to double arrows
       '(\\b (case|default) \\b [^\\n]*) \\s \\=>' => '$1:', // remove double arrows from cases
       '<\\? (?!php\\b|=)' => '<?php', // convert short opening tag to long tag
@@ -44,11 +45,12 @@ class Lady {
       '<\\?php \\b' => '<?', //self::convert long opening tag to short tag
       '({methodPrefix}) function \\s+ ({varId} \\s*\\()' => '$1$2', // remove functions
       '\\\\ \\$' => '$', // unescape dollars before keywords
+      ';([\s\']*\n)' => '$1', // remove trailing semicolons
     ],
     // patterns for inline html, strings and comments
     'tokens' => '(?: (?: (?:^|\\?>) (?:[^<]|<[^?])* (<\\?(?:php\\b)?)? )
       |(?: "[^"\\\\]*(?:\\\\[\\s\\S][^"\\\\]*)*" | \'[^\'\\\\]*(?:\\\\[\\s\\S][^\'\\\\]*)*\' )
-      |(?: (?://|\#)[^\\n]*\\n | /\\* (?:[^*]|\\*(?!/))* \\*/) )',
+      |(?: (?://|\#)[^\\n]*(?=\\n) | /\\* (?:[^*]|\\*(?!/))* \\*/) )'
   ];
 
   public static function toPhp($input){
@@ -67,14 +69,24 @@ class Lady {
     $tokensPattern = sprintf('{%s}x', self::$rules['tokens']);
     $code = preg_replace_callback($tokensPattern, function ($m) use (&$strings) {
       $strings[] = isset($m[1]) ? substr($m[0], 0, -strlen($m[1])) : $m[0];
-      return '""' . (isset($m[1]) ? $m[1] : '');
+      return (preg_match('{^[\'"]}', $m[0]) ? '""' : "''") . (isset($m[1]) ? $m[1] : '');
+    }, $code);
+    $closureBrackets = [];
+    $code = preg_replace_callback('/([^{}]*)([{}])/x', function ($m) use (&$closureBrackets) {
+      if ($m[2] == '{') {
+        $closureBrackets[] = preg_match('/\b function \b[\s\']* \(/x', $m[1]) == 1;
+        return $m[0];
+      } else {
+        return $m[1] . (array_pop($closureBrackets) ? '"}"' : '}');
+      }
     }, $code);
     $patterns = preg_replace_callback('~{(\w+)}~', function ($m) {
       return self::$rules[$m[1]];
     }, array_keys($rules));
     $patterns = preg_replace('{^.*$}s', '{\0}x', $patterns);
     $code = preg_replace($patterns, $rules, $code);
-    return preg_replace_callback('{""}', function ($m) use (&$strings) {
+    $code = preg_replace('{"\}"}', '}', $code);
+    return preg_replace_callback('{""|\'\'}', function ($m) use (&$strings) {
       return array_shift($strings);
     }, $code);
   }

@@ -5,51 +5,51 @@
   comment
 */
 class Fruit {
-  private apples = 0; // we have nothing now
+  private apples = 0 // we have nothing now
   private static numbers = [ # english numbers
     1: 'one',
     2: 'two',
     3: 'three'
-  ];
+  ]
 
   public addApples(n = 0) {
     if (n >= 0) {
-      @apples += n;
+      @apples += n
     }
-    return this;
+    return this
   }
 
   public countApples() {
-    out = 'You have ';
-    out .= isset(@@numbers[@apples]) ? @@numbers[@apples] : @apples;
+    out = 'You have '
+    out .= isset(@@numbers[@apples]) ? @@numbers[@apples] : @apples
     switch (@apples) {
       case 1:
-        return out ~ ' apple.';
+        return out ~ ' apple.'
       default:
-        return "$out apples.";
+        return "$out apples."
     }
-    @addApples(0);
-    \@@@staticMethod();
+    @addApples(0)
+    \@@@staticMethod()
   }
 
   public static staticMethod () {
-    $try = (double) 0.42;
+    $try = (double) 0.42
   }
 }
 
-fruit = new Fruit();
+fruit = new Fruit()
 
 anonym = function() use (fruit) {
   fruit.addApples(1)
-       .addApples(2);
-};
+       .addApples(2)
+}
 
-$anonym();
+$anonym()
 
 ?><p><? echo fruit.countApples() ?></p><?
 ?><p><?= fruit.countApples() ?></p><?
 
-\@Cls.func();
-Cls.v;
-a = a ?: b;
-a = \~b;
+\@Cls.func()
+Cls.v
+a = a ?: b
+a = \~b
