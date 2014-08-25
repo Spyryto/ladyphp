@@ -15,13 +15,15 @@
     <![endif]-->
   </head>
   <body>
-    <div class="container-fluid top-stripe">
-      <div class="container">
-        <div id="title-box" class="title-box media">
-          <div class="pull-left logo"></div>
-          <div class="media-body">
-            <h1>LadyPHP</h1>
-            <h2>makes your code look beautiful</h2>
+    <div class="top-stripe-box">
+      <div id="top-stripe" class="container-fluid top-stripe">
+        <div class="container">
+          <div class="title-box media">
+            <div class="pull-left logo"></div>
+            <div class="media-body">
+              <h1>LadyPHP</h1>
+              <h2>makes your code look beautiful</h2>
+            </div>
           </div>
         </div>
       </div>
@@ -31,14 +33,13 @@
       <div class="row demo">
         <div class="col-sm-6">
           <h2>LadyPHP</h2>
-          <textarea id="lady" class="form-control" rows="16">
-<?
+          <textarea id="lady" class="form-control" rows="14" spellcheck="false">
+<? // live demo
 
 class Village {
   private people = [
-    1: 'Stone',
-    2: 'Stone'
-  ];
+    1: 'Stone'
+  ]
   public addPerson(name) {
     @people[] = name
   }
@@ -50,7 +51,7 @@ v.addPerson('Stone')
         </div>
         <div class="col-sm-6">
           <h2>PHP</h2>
-          <textarea id="php" class="form-control" rows="16"></textarea>
+          <textarea id="php" class="form-control" rows="14" spellcheck="false"></textarea>
         </div>
       </div>
 
@@ -58,6 +59,7 @@ v.addPerson('Stone')
       <p>Do you also hate all these dollars, arrows and $this everywhere in you PHP files? Well, PHP just isn't the sexiest one when compared to other languages. But still you're not going to switch language just because the syntax, right? Now you can switch syntax without leaving the language, meet LadyPHP!</p>
       <p>LadyPHP is a <abbr title="That's right, it's a preprocessor for preprocessor. Uhm... did I mention it's written in a preprocessor?">preprocessor for PHP</abbr>, that allows you to write code with cleaner syntax. It can do conversion in <strong>both ways</strong>, so you can start writing your current projects with lady syntax right away and save them back to PHP, your collaborators won't notice.</p>
       <p>This software is <strong>still under development</strong>, but should be usable already. For now, the simplest usage is from command line, but there will be plugins for text editors (and IDEs) with transparent conversion.</p>
+      <p>LadyPHP is currently implemented in PHP and in JavaScript. Both versions have same functionality.</p>
 
       <h2>Download</h2>
       <p>Get source code on <a href="http://github.com/unu/ladyphp">GitHub</a> or download executable PHP archive <a href="https://db.tt/ITnDm5KI">ladyphp.phar</a>.</p>

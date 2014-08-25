@@ -33,9 +33,9 @@ ladyBox.onchange = ladyBox.onkeyup;
 phpBox.onchange = phpBox.onkeyup;
 
 document.onscroll = function() {
-  var titleBox = document.getElementById('title-box');
   var top = (window.pageYOffset || document.documentElement.scrollTop);
-  titleBox.style.top = (window.innerWidth > 550) ? (top * 0.25) + 'px' : '0';
+  document.getElementById('top-stripe').style.top
+    = (window.innerWidth > 550) ? (top * 0.25) + 'px' : '0';
 };
 
 (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){

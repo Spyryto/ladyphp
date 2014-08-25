@@ -45,15 +45,17 @@ strong {
   color: #a11;
   background: white;
 }
-.top-stripe {
-  background: #a11 url("background.jpg") 0 center;
-  background-size: cover;
+.top-stripe-box {
   border-bottom: 10pt solid #ddd;
   overflow: hidden;
 }
+.top-stripe {
+  position: relative;
+  background: #a11 url("background.jpg") 0 center;
+  background-size: cover;
+}
 .title-box {
   padding: 2.8em 0;
-  position: relative;
 }
 .title-box h1, .title-box h2 {
   margin: 0;
