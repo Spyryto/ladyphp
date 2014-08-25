@@ -4,7 +4,7 @@ class LadyCommand {
   public $quiet = false;
 
   public function run($argv) {
-    $options = 'o:rwtdqh';
+    $options = 'o:rwtdqhs';
     $opt = getopt($options, array('help'));
 
     foreach ($opt as $o => $a) {
@@ -14,7 +14,11 @@ class LadyCommand {
       }
     }
     $argv = array_values($argv);
-    $this->quiet = isset($opt['q']);
+    $this->quiet = isset($opt['q']) || isset($opt['s']);
+
+    if (isset($opt['s'])) {
+      return $this->convertFile('php://stdin', 'php://stdout', isset($opt['r']));
+    }
 
     $inputFile = isset($argv[1]) ? $argv[1] : null;
     if (!$inputFile || isset($opt['h']) || isset($opt['help'])) {
@@ -142,6 +146,7 @@ class LadyCommand {
       . "  -r        Convert PHP to LadyPHP\n"
       . "  -t        Test that files converted to lady and back are same as original\n"
       . "  -d        Show diff for tests\n"
+      . "  -s        Read from STDIN and write to STDOUT\n"
       . "  -q        Hide messages\n");
   }
 }
