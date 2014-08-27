@@ -1,3 +1,4 @@
 ladyphp.phar
 *.lady
-!/test/*.lady
+/test/*
+!/test/example.*

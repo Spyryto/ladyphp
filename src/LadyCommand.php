@@ -83,18 +83,22 @@ class LadyCommand {
     }
   }
 
-  public function testFile($phpFile, $showDiff = false) {
+  public function testFile($phpFile, $showDiff = false, $batch = false) {
     $originalCode = file_get_contents($phpFile);
     $ladyCode = Lady::toLady($originalCode);
     $generatedCode = Lady::toPhp($ladyCode);
     $success = ($generatedCode == $originalCode);
-    $this->log("Test " . ($success ? 'PASSED' : 'FAILED') . ": $phpFile");
+    if ($batch) {
+      $this->log($success ? '.' : 'f', false);
+    } else {
+      $this->log(sprintf("Test %s: %s", $success ? 'PASSED' : 'FAILED', $phpFile));
+    }
     if (!$success && $showDiff) {
       $generatedFile = tempnam(sys_get_temp_dir(), 'lady');
       file_put_contents($generatedFile, $generatedCode);
       $diff = shell_exec('diff -u ' . escapeshellarg($phpFile) . ' '
         . escapeshellarg($generatedFile));
-      $this->log($diff);
+      $this->log("\n$diff");
       unlink($generatedFile);
     }
     return $success;
@@ -103,13 +107,13 @@ class LadyCommand {
   public function testDirectory($dir, $showDiff = false) {
     $ok = $ko = 0;
     foreach ($this->getFilesFromDirectory($dir, 'php') as $file) {
-      if ($this->testFile($file, $showDiff)) {
+      if ($this->testFile($file, $showDiff, true)) {
         $ok++;
       } else {
         $ko++;
       }
     }
-    $this->log(sprintf("Test score: %2d OK / %2d KO", $ok, $ko));
+    $this->log(sprintf("\nTest score: %2d OK / %2d KO", $ok, $ko));
     return ($ko == 0);
   }
 
@@ -127,9 +131,9 @@ class LadyCommand {
     return array_keys($files);
   }
 
-  protected function log($text) {
+  protected function log($text, $nl = true) {
     if (!$this->quiet) {
-      file_put_contents('php://stderr', "$text\n");
+      file_put_contents('php://stderr', "$text" . ($nl ? "\n" : ''));
     }
   }
 

@@ -8,8 +8,7 @@ class Fruit {
   private $apples = 0; // we have nothing now
   private static $numbers = [ # english numbers
     1 => 'one',
-    2 => 'two',
-    3 => 'three'
+    'x' => 'two',
   ];
 
   public function addApples($n = 0) {
@@ -53,3 +52,13 @@ $anonym();
 Cls::$v;
 $a = $a ?: $b;
 $a = ~$b;
+$a->$x;
+
+$class();
+$this->class;
+foreach($list as $x => $y){}
+$list = [
+  'x' => 0,
+  $y => 1
+];
+
