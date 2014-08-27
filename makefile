@@ -3,7 +3,10 @@ all: phar test
 phar:
 	@./bin/build-phar
 
-test: test-tophp test-tolady test-lint self-test
+test: test-tophp test-tolady test-lint self-test test-js
+
+test-js:
+	@make -sC js
 
 test-tophp:
 	@printf 'Testing Lady.toPhp(): '
@@ -32,5 +35,5 @@ self-test:
 	@rm test/Lady.lady test/Lady.php test/Lady.diff
 	@echo 'PASSED'
 
-.PHONY: all phar test
+.PHONY: all phar test test-js test-tophp test-tolady test-lint self-test
 

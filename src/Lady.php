@@ -2,10 +2,10 @@
 
 class Lady {
   public static $rules = [
-    'parser' => '(?: ( (?:^|\\?>) (?:[^<]|<[^?])* (?=<\?(?:php\b)?|$) )
+    'parser' => '(?: ( (?:^|\\?>) (?:[^<]|<[^?])* (?=\<\?(?:php\b)?|$) )
       |(?: "[^"\\\\]*(?:\\\\[\\s\\S][^"\\\\]*)*" | \'[^\'\\\\]*(?:\\\\[\\s\\S][^\'\\\\]*)*\' )
       |(?: (?://|\#)[^\\n]*(?=\\n) | /\\* (?:[^*]|\\*(?!/))* \\*/)
-      |(?: <\?php\b ) |(?: [a-zA-Z0-9_]\w* ) )',
+      |(?: \?php\b) |(?: [a-zA-Z0-9_]\w* ) )',
     'closure' => '(^|[^>.$]|[^-]>)F[S\s]*\(',
     'tokens' => [
       'A' => 'case|default',
@@ -22,7 +22,7 @@ class Lady {
         |while|yield|array|binary|bool(?:ean)?|double|float|int(?:eger)?
         |object|real|string|unset',
       'M' => 'private|protected|public|final|abstract',
-      'P' => '<\?php',
+      'P' => '\?php',
       'S' => '[/\#][\w\W]*',
       'T' => 'this',
       'U' => 'static',
@@ -80,7 +80,7 @@ class Lady {
       '\$(keyword)' => '$V', // mark variables
       'I(\s?=>)' => 'Y$1', // unquote array keys
       '(^|[^S\s])\s?=>(\s)' => '$1:$2', // double arrows to colons
-      'P' => 'N<?', //convert long opening tag to short tag
+      'phptag' => 'N?', //convert long opening tag to short tag
       '(methodprefix)function(?:space)(space*var)' => '$1N$2', // remove functions
       '\\\\\\$' => '$', // unescape dollars before keywords
       ';(space*\n)' => '$1', // remove trailing semicolons

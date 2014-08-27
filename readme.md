@@ -9,9 +9,11 @@ LadyPHP is a <abbr title="That's right, it's a preprocessor for preprocessor. Uh
 This software is **still under development**, and syntax and API can be changed. For now, you can use LadyPHP from command line. You can also try [LadyPHP plugin for Vim](http://github.com/unu/vim-ladyphp).
 
 ## Demo
-You can try older version of LadyPHP in your browser: <http://ladyphp.honzanovak.com>.
+
+You can [try JavaScript version](http://ladyphp.honzanovak.com) of LadyPHP right in your browser.
 
 ## Syntax reference
+
 <table>
   <tr><th>LadyPHP</th><th>PHP</th></tr>
   <tr><td><code>x</code></td><td><code>$x</code></td></tr>
@@ -43,4 +45,6 @@ ladyphp -w dir/    # watches directory and converts updated lady files
 Get source code on [GitHub](http://github.com/unu/ladyphp) or download executable PHP archive [ladyphp.phar](https://db.tt/ITnDm5KI).
 
 ## Credits
+
 LadyPHP is created by [Honza Novák](http://honzanovak.com) and it's licensed under a [Creative Commons BY-SA](http://creativecommons.org/licenses/by-sa/4.0/).
+
