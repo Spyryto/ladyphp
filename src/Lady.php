@@ -2,19 +2,22 @@
 
 class Lady {
   public static $rules = [
-    'keywords' => 'abstract|and|as|break|callable|case|catch|class|clone|const
-      |continue|declare|default|do|echo|else(if)?|end(declare|for(each)?|if
-      |switch|while)?|extends|false|final|for(each)?|function|global|goto|if
-      |implements|include(_once)?|instanceof|insteadof|interface|namespace|new
-      |null|or|parent|print|private|protected|public|require(_once)?|return
-      |self|static|switch|throw|trait|true|try|use|var|while|xor|yield|array
-      |binary|bool(ean)?|double|float|int(eger)?|object|real|string|unset',
+    'joiningKeywords' => 'and|as|extends|implements|instanceof|insteadof|x?or',
+    'leadingKeywords' => '{joiningKeywords}|abstract|callable|case|catch|class
+      |clone|const|declare|do|echo|else(?:if)?|final|for(?:each)?|function
+      |global|goto|if|include(?:_once)?|interface|namespace|new|print|private
+      |protected|public|require(?:_once)?|switch|throw|trait|try|use|var|while
+      |yield|array|binary|bool(?:ean)?|double|float|int(?:eger)?|object|real
+      |string|unset',
+    'keywords' => '{leadingKeywords}|break|continue|default|end(?:declare|for
+      (?:each)?|if|switch|while)?|false|null|parent|return|self|static|true',
     'methodPrefix' => '\\b(?:private|protected|public)(?:\\s+ static)?\\s+',
     'classId' => '(^|[^>$]|[^-]>) \\b(?:self|static|parent|[A-Z]\\w*|_+[A-Z])\\b',
     'varId' => '\\b (?:[a-z]\\w*|_+[a-z]\\w*|GLOBALS|_SERVER|_REQUEST|_POST|_GET
       |_FILES|_ENV|_COOKIE|_SESSION) \\b',
     'closure' => '(^|[^.$])\bfunction\b[\s\']*\(',
-    'statementEnd' => '[\s\']* (\n|$)(?![\s\']*[\])\.\-\+:=/%*&|>,\{?]|<[^?]|and|or|xor)',
+    'statementEnd' => '[\s\']* (\n|$)(?![\s\']*([\])\.\-\+:=/%*&|>,\{?]|<[^?]
+      |({joiningKeywords})\b))',
     'toPhp' => [
       '\\$' => '\\\\$', // escape dollars
       '(^|[^\\\\]) @@' => '$1self::', // @@ to self
@@ -22,9 +25,10 @@ class Lady {
       '\\.([^.=0-9])' => '->$1', // dots to arrows
       '(^|[^\\\\]) ~' => '$1.', // tilde to single dot
       '({classId}) ->' => '$1::', // arrows to two colons
-      '([\w"\]\)\-+])({statementEnd})' => '$1;$2', // add trailing semicolons
       '(^|[^>$\\\\]) ({varId} (?!\s*\\() )' => '$1$$2', // add dollars
       '(^|[^\\\\]) \\$ ({keywords}) \\b' => '$1$2', // remove dollars from keywords
+      '([\w"\]\)\-+]|[^\{;\s]\})({statementEnd})' => '$1;$2', // add trailing semicolons
+      '((?:^|[^$>]) \b (?:{leadingKeywords})) \; ([\s\']* (\n|$))' => '$1$2', // remove semicolons after leading keywords
       '<\\?\\$php;? \\b' => '<?php', // remove dollars from opening tags
       '(^|[^\\?:\\s\\\\]) : (\\s)' => '$1 =>$2', // colons to double arrows
       '(\\b (case|default) \\b [^\\n]*) \\s \\=>' => '$1:', // remove double arrows from cases
@@ -82,9 +86,14 @@ class Lady {
         return $m[1] . (array_pop($closureBrackets) ? '"}"' : '}');
       }
     }, $code);
-    $patterns = preg_replace_callback('~{(\w+)}~', function ($m) {
-      return self::$rules[$m[1]];
-    }, array_keys($rules));
+    $patterns = array_keys($rules);
+    foreach ($patterns as &$pattern) {
+      while (preg_match('~{(\w+)}~', $pattern)) {
+        $pattern = preg_replace_callback('~{(\w+)}~', function ($m) {
+          return self::$rules[$m[1]];
+        }, $pattern);
+      }
+    }
     $patterns = preg_replace('{^.*$}s', '{\0}x', $patterns);
     $code = preg_replace($patterns, $rules, $code);
     $code = preg_replace('{"\}"}', '}', $code);

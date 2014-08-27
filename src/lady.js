@@ -1,5 +1,5 @@
 var Lady = {};
-Lady.rules = {"keywords":"abstract|and|as|break|callable|case|catch|class|clone|const|continue|declare|default|do|echo|else(if)?|end(declare|for(each)?|if|switch|while)?|extends|false|final|for(each)?|function|global|goto|if|implements|include(_once)?|instanceof|insteadof|interface|namespace|new|null|or|parent|print|private|protected|public|require(_once)?|return|self|static|switch|throw|trait|true|try|use|var|while|xor|yield|array|binary|bool(ean)?|double|float|int(eger)?|object|real|string|unset","methodPrefix":"\\b(?:private|protected|public)(?:\\s+static)?\\s+","classId":"(^|[^>$]|[^-]>)\\b(?:self|static|parent|[A-Z]\\w*|_+[A-Z])\\b","varId":"\\b(?:[a-z]\\w*|_+[a-z]\\w*|GLOBALS|_SERVER|_REQUEST|_POST|_GET|_FILES|_ENV|_COOKIE|_SESSION)\\b","closure":"(^|[^.$])\\bfunction\\b[\\s']*\\(","statementEnd":"[\\s']*(\\n|$)(?![\\s']*[\\])\\.\\-\\+:=\/%*&|>,\\{?]|<[^?]|and|or|xor)","toPhp":{"\\$":"\\\\$","(^|[^\\\\])@@":"$1self::","(^|[^\\\\])@":"$1$this->","\\.([^.=0-9])":"->$1","(^|[^\\\\])~":"$1.","({classId})->":"$1::","([\\w\"\\]\\)\\-+])({statementEnd})":"$1;$2","(^|[^>$\\\\])({varId}(?!\\s*\\())":"$1$$2","(^|[^\\\\])\\$({keywords})\\b":"$1$2","<\\?\\$php;?\\b":"<?php","(^|[^\\?:\\s\\\\]):(\\s)":"$1 =>$2","(\\b(case|default)\\b[^\\n]*)\\s\\=>":"$1:","<\\?(?!php\\b|=)":"<?php","({methodPrefix})({varId}\\s*\\()":"$1function $2","\\\\([~@$])":"$1"},"toLady":{"([@~])":"\\\\$1","(->)\\$":"$1\\\\$","\\$\\$":"\\\\$\\\\$","\\$({keywords})\\b":"\\\\$$1","\\$this->":"@","\\bself::":"@@","\\.(?![=0-9])":"~","->":".","({classId})::":"$1.","(^|[^\\\\])\\$({varId}\\b(?!\\s*\\())":"$1$2","(^|[^\\s])\\s? =>(\\s)":"$1:$2","<\\?php\\b":"<?","({methodPrefix})function\\s+({varId}\\s*\\()":"$1$2","\\\\\\$":"$",";([\\s']*\\n)":"$1"},"tokens":"(?:(?:(?:^|\\?>)(?:[^<]|<[^?])*(<\\?(?:php\\b)?)?)|(?:\"[^\"\\\\]*(?:\\\\[\\s\\S][^\"\\\\]*)*\"|'[^'\\\\]*(?:\\\\[\\s\\S][^'\\\\]*)*')|(?:(?:\/\/|\\#)[^\\n]*(?=\\n)|\/\\*(?:[^*]|\\*(?!\/))*\\*\/))"};
+Lady.rules = {"joiningKeywords":"and|as|extends|implements|instanceof|insteadof|x?or","leadingKeywords":"{joiningKeywords}|abstract|callable|case|catch|class|clone|const|declare|do|echo|else(?:if)?|final|for(?:each)?|function|global|goto|if|include(?:_once)?|interface|namespace|new|print|private|protected|public|require(?:_once)?|switch|throw|trait|try|use|var|while|yield|array|binary|bool(?:ean)?|double|float|int(?:eger)?|object|real|string|unset","keywords":"{leadingKeywords}|break|continue|default|end(?:declare|for(?:each)?|if|switch|while)?|false|null|parent|return|self|static|true","methodPrefix":"\\b(?:private|protected|public)(?:\\s+static)?\\s+","classId":"(^|[^>$]|[^-]>)\\b(?:self|static|parent|[A-Z]\\w*|_+[A-Z])\\b","varId":"\\b(?:[a-z]\\w*|_+[a-z]\\w*|GLOBALS|_SERVER|_REQUEST|_POST|_GET|_FILES|_ENV|_COOKIE|_SESSION)\\b","closure":"(^|[^.$])\\bfunction\\b[\\s']*\\(","statementEnd":"[\\s']*(\\n|$)(?![\\s']*([\\])\\.\\-\\+:=\/%*&|>,\\{?]|<[^?]|({joiningKeywords})\\b))","toPhp":{"\\$":"\\\\$","(^|[^\\\\])@@":"$1self::","(^|[^\\\\])@":"$1$this->","\\.([^.=0-9])":"->$1","(^|[^\\\\])~":"$1.","({classId})->":"$1::","(^|[^>$\\\\])({varId}(?!\\s*\\())":"$1$$2","(^|[^\\\\])\\$({keywords})\\b":"$1$2","([\\w\"\\]\\)\\-+]|[^\\{;\\s]\\})({statementEnd})":"$1;$2","((?:^|[^$>])\\b(?:{leadingKeywords}))\\;([\\s']*(\\n|$))":"$1$2","<\\?\\$php;?\\b":"<?php","(^|[^\\?:\\s\\\\]):(\\s)":"$1 =>$2","(\\b(case|default)\\b[^\\n]*)\\s\\=>":"$1:","<\\?(?!php\\b|=)":"<?php","({methodPrefix})({varId}\\s*\\()":"$1function $2","\\\\([~@$])":"$1"},"toLady":{"([@~])":"\\\\$1","(->)\\$":"$1\\\\$","\\$\\$":"\\\\$\\\\$","\\$({keywords})\\b":"\\\\$$1","\\$this->":"@","\\bself::":"@@","\\.(?![=0-9])":"~","->":".","({classId})::":"$1.","(^|[^\\\\])\\$({varId}\\b(?!\\s*\\())":"$1$2","(^|[^\\s])\\s? =>(\\s)":"$1:$2","<\\?php\\b":"<?","({methodPrefix})function\\s+({varId}\\s*\\()":"$1$2","\\\\\\$":"$",";([\\s']*\\n)":"$1"},"tokens":"(?:(?:(?:^|\\?>)(?:[^<]|<[^?])*(<\\?(?:php\\b)?)?)|(?:\"[^\"\\\\]*(?:\\\\[\\s\\S][^\"\\\\]*)*\"|'[^'\\\\]*(?:\\\\[\\s\\S][^'\\\\]*)*')|(?:(?:\/\/|\\#)[^\\n]*(?=\\n)|\/\\*(?:[^*]|\\*(?!\/))*\\*\/))"};
 
 Lady.toPhp = function(input) {
   return Lady.convert(input, Lady.rules.toPhp);
@@ -26,11 +26,14 @@ Lady.convert = function(code, rules) {
     }
   });
   for (var i in rules) {
-    var pattern = new RegExp(i.replace(/{(\w+)}/g, function(s, id) {
-      return Lady.rules[id];
-    }), 'g');
+    var pattern = i
+    while (pattern.match(/{(\w+)}/g)) {
+      pattern = pattern.replace(/{(\w+)}/g, function(s, id) {
+        return Lady.rules[id];
+      });
+    }
     var replacement = rules[i].replace(/\\\$/, '$');
-    code = code.replace(pattern, function(x, a, b) {
+    code = code.replace(new RegExp(pattern, 'g'), function(x, a, b) {
       return replacement.replace(/\$1/, a).replace(/\$2/, b);
     });
   }

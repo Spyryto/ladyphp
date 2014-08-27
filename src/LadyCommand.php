@@ -31,7 +31,7 @@ class LadyCommand {
 
     if (is_dir($inputFile)) {
       if (isset($opt['t'])) {
-        $this->testDirectory($inputFile, isset($opt['d']));
+        exit($this->testDirectory($inputFile, isset($opt['d'])) ? 0 : 1);
       } elseif (isset($opt['w'])) {
         $this->watchDirectory($inputFile, $convertToLady);
       } else {
@@ -41,7 +41,7 @@ class LadyCommand {
       }
     } else {
       if (isset($opt['t'])) {
-        $this->testFile($inputFile, isset($opt['d']));
+        exit($this->testFile($inputFile, isset($opt['d'])) ? 0 : 1);
       } else {
         $this->convertFile($inputFile, isset($opt['o']) ? $opt['o'] : null, $convertToLady);
       }
