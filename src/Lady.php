@@ -2,10 +2,9 @@
 
 class Lady {
   public static $rules = [
-    'parser' => '(?: ( (?:^|\\?>) (?:[^<]|<[^?])* (?=\<\?(?:php\b)?|$) )
-      |(?: "[^"\\\\]*(?:\\\\[\\s\\S][^"\\\\]*)*" | \'[^\'\\\\]*(?:\\\\[\\s\\S][^\'\\\\]*)*\' )
-      |(?: (?://|\#)[^\\n]*(?=\\n) | /\\* (?:[^*]|\\*(?!/))* \\*/)
-      |(?: \?php\b) |(?: [a-zA-Z0-9_]\w* ) )',
+    'parser' => '(?:(?:<\?php) | ((?:^|\?>) (?:[^<]|<[^?])* (?=<\?|$))
+      |(?:"[^"\\\\]*(?:\\\\[\s\S][^"\\\\]*)*"|\'[^\'\\\\]*(?:\\\\[\s\S][^\'\\\\]*)*\')
+      |(?://|\#)[^\n]*(?=\n) | /\*(?:[^*]|\*(?!/))*\*/ | (?:[a-zA-Z0-9_]\w*))',
     'closure' => '(^|[^>.$]|[^-]>)F[S\s]*\(',
     'tokens' => [
       'A' => 'case|default',
@@ -15,14 +14,15 @@ class Lady {
       'I' => '[\'"]_*[a-z][a-zA-Z0-9_]*[\'"]',
       'J' => 'and|as|extends|implements|instanceof|insteadof|x?or',
       'K' => 'break|continue|end(?:declare|for(?:each)?|if|switch|while)?
-        |false|null|parent|return|true',
+        |false|null|return|true',
       'L' => 'callable|catch|class|clone|const|declare|do|echo|else(?:if)?
         |for(?:each)?|global|goto|if|include(?:_once)?|interface|namespace
         |new|print|private|require(?:_once)?|switch|throw|trait|try|use|var
         |while|yield|array|binary|bool(?:ean)?|double|float|int(?:eger)?
         |object|real|string|unset',
       'M' => 'private|protected|public|final|abstract',
-      'P' => '\?php',
+      'P' => '<\?php',
+      'R' => 'parent',
       'S' => '[/\#][\w\W]*',
       'T' => 'this',
       'U' => 'static',
@@ -33,22 +33,22 @@ class Lady {
     ],
     'dictionary' => [
       'case' => 'A',
-      'class' => '[CEU]',
+      'class' => '[CERU]',
       'eol' => '(?:\n|$)',
       'eos' => '[S\s]*(\n|$)(?![S\s]*([\])\.\-+:=/%*&|>,\{?]|<[^?]|J))',
       'function' => 'F',
-      'key' => '[AJKLPMFUVTE]',
-      'keyword' => '[JKLPAMFU]',
-      'leading' => '[JLF]',
+      'key' => '[AEFJKLMPRTUV]',
+      'keyword' => '[AFJKLMPRU]',
+      'leading' => '[FJL]',
       'methodprefix' => '[MU][MSU\s]*',
       'noesc' => '^|[^\\\\]',
       'noprop' => '^|[^>$\\\\]|[^-]>',
       'phptag' => 'P',
       'self' => 'E',
       'space' => '[S\s]',
-      'string' => '[IH]',
+      'string' => '[HI]',
       'this' => 'T',
-      'var' => '[VT]',
+      'var' => '[TV]',
     ],
     'toPhp' => [
       '(([$\\\\]|->) keyword)' => '$2V', // mark variables
@@ -80,10 +80,10 @@ class Lady {
       '\$(keyword)' => '$V', // mark variables
       'I(\s?=>)' => 'Y$1', // unquote array keys
       '(^|[^S\s])\s?=>(\s)' => '$1:$2', // double arrows to colons
-      'phptag' => 'N?', //convert long opening tag to short tag
+      'phptag' => 'N<?', //convert long opening tag to short tag
       '(methodprefix)function(?:space)(space*var)' => '$1N$2', // remove functions
       '\\\\\\$' => '$', // unescape dollars before keywords
-      ';(space*\n)' => '$1', // remove trailing semicolons
+      ';(space*eol)' => '$1', // remove trailing semicolons
     ]
   ];
 
@@ -103,8 +103,8 @@ class Lady {
     $values = $brackets = [];
     $parser = sprintf('{%s}x', self::$rules['parser']);
     $code = preg_replace_callback($parser, function ($m) use (&$values) {
-      $values[] = isset($m[2]) ? substr($m[0], 0, -strlen($m[2])) : $m[0];
-      if (isset($m[1])) return 'H' . (isset($m[2]) ? $m[2] : '');
+      $values[] = $m[0];
+      if (isset($m[1])) return 'H';
       foreach (self::$rules['tokens'] as $name => $pattern) {
         if (preg_match(sprintf('{^(%s)$}x', $pattern), $m[0])) return $name;
       }
@@ -120,10 +120,10 @@ class Lady {
     $patterns = preg_replace_callback('/([a-z]{3,}),?/', function ($m) {
       return self::$rules['dictionary'][$m[1]];
     }, array_keys($rules));
-    $patterns = preg_replace('{^.*$}s', '{$0}x', $patterns);
+    $patterns = preg_replace('/^.*/s', '{$0}x', $patterns);
     $code = preg_replace($patterns, $rules, $code);
-    $code = str_replace('B', '}', $code);
     return preg_replace_callback('/[A-Z]/', function ($m) use (&$values) {
+      if ($m[0] == 'B') return '}';
       $value = array_shift($values);
       return ($m[0] == 'N') ? '' : ($m[0] == 'Y' ? substr($value, 1, -1) : $value);
     }, $code);

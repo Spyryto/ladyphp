@@ -1,8 +1,8 @@
-all: rules test
+all: updatejs test
 test: test-jstophp test-jstolady
 
-rules:
-	@./update-rules
+updatejs:
+	@./update-ladyjs.php
 
 test-jstophp:
 	@printf 'Testing Lady.js.toPhp(): '
@@ -18,5 +18,5 @@ test-jstolady:
 	@rm ../test/js.toLady.actual ../test/js.toLady.diff
 	@echo 'PASSED'
 
-.PHONY: all test rules test-jstophp test-jstolady
+.PHONY: all test updatejs test-jstophp test-jstolady
 

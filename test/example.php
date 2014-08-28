@@ -56,6 +56,7 @@ $a->$x;
 
 $class();
 $this->class;
+parent::$a;
 foreach($list as $x => $y){}
 $list = [
   'x' => 0,
