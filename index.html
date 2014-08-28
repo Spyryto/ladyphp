@@ -31,25 +31,25 @@
 
     <div class="container content-box">
       <div class="row demo">
-        <div class="col-sm-6">
-          <h2>LadyPHP</h2>
+        <div class="col-sm-5 demo-left">
+          <h2>Lady</h2>
           <textarea id="lady" class="form-control" rows="14" spellcheck="false">
-<? // live demo
+&lt;? // live demo
 
-class Village {
-  private people = [
-    1: 'Stone'
+class Colors {
+  private colors = [
+    navyBlue: 0x1974d2
   ]
-  public addPerson(name) {
-    @people[] = name
+  public add(id, value) {
+    @colors[id] = value
   }
 }
 
-v = new Village()
-v.addPerson('Stone')
+c = new Colors()
+c.add('desire', 0xea3c53)
 </textarea>
         </div>
-        <div class="col-sm-6">
+        <div class="col-sm-7 demo-right">
           <h2>PHP</h2>
           <textarea id="php" class="form-control" rows="14" spellcheck="false"></textarea>
         </div>
@@ -57,12 +57,16 @@ v.addPerson('Stone')
 
       <h2>Introduction</h2>
       <p>Do you also hate all these dollars, arrows and $this everywhere in you PHP files? Well, PHP just isn't the sexiest one when compared to other languages. But still you're not going to switch language just because the syntax, right? Now you can switch syntax without leaving the language, meet LadyPHP!</p>
-      <p>LadyPHP is a <abbr title="That's right, it's a preprocessor for preprocessor. Uhm... did I mention it's written in a preprocessor?">preprocessor for PHP</abbr>, that allows you to write code with cleaner syntax. It can do conversion in <strong>both ways</strong>, so you can start writing your current projects with lady syntax right away and save them back to PHP, your collaborators won't notice.</p>
-      <p>This software is <strong>still under development</strong>, but should be usable already. For now, the simplest usage is from command line, but there will be plugins for text editors (and IDEs) with transparent conversion.</p>
-      <p>LadyPHP is currently implemented in PHP and in JavaScript. Both versions have same functionality.</p>
+      <p>LadyPHP is a <abbr title="Hey, that's not weird at all!">preprocessor for PHP</abbr>, that allows you to write code with cleaner syntax. It can do conversion in <strong>both ways</strong>, so you can start writing your current projects with lady syntax right away and save them back to PHP, your collaborators won't notice.</p>
+      <p>This software is still <strong>under heavy development</strong>, syntax and API can be changed.</p>
 
       <h2>Download</h2>
-      <p>Get source code on <a href="http://github.com/unu/ladyphp">GitHub</a> or download executable PHP archive <a href="https://db.tt/ITnDm5KI">ladyphp.phar</a>.</p>
+      <ul class="nav nav-pils nav-stacked">
+        <li><a href="http://github.com/unu/ladyphp">Source code on GitHub</a></li>
+        <li><a href="http://db.tt/ITnDm5KI">Executable PHAR file</a></li>
+        <li><a href="http://github.com/unu/sublime-ladyphp">Plugin for Sublime Text 3</a></li>
+        <li><a href="http://github.com/unu/vim-ladyphp">Plugin for Vim</a></li>
+      </ul>
 
       <h2>Syntax reference</h2>
       <div class="row">
@@ -74,9 +78,8 @@ v.addPerson('Stone')
             <tr><td>Cls.x</td><td>Cls::$x</td></tr>
             <tr><td>@x</td><td>$this->x</td></tr>
             <tr><td>@@x</td><td>self::$x</td></tr>
-            <tr><td>obj.f()</td><td>$obj->f()</td></tr>
             <tr><td>public f()</td><td>public function f()</td></tr>
-            <tr><td>[1: 2]</td><td>[1 => 2]</td></tr>
+            <tr><td>[k: 'v']</td><td>['k' => 'v']</td></tr>
             <tr><td>x ~ y</td><td>x . y</td></tr>
             <tr><td>&lt;?</td><td>&lt;?php</td></tr>
           </table>
@@ -95,7 +98,7 @@ ladyphp -w dir/    # watches directory and converts updated lady files
 </pre>
 
       <h2>Credits</h2>
-      <p>LadyPHP is created by <a href="http://honzanovak.com">Honza Novák</a> and it's licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons CC-BY-SA</a>.
+      <p>LadyPHP is created by <a href="http://honzanovak.com">Honza Novák</a> and it's licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons BY-SA</a>.
 
     </div>
     <div class="footer-stripe container-fluid">

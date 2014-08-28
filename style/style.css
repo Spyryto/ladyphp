@@ -29,6 +29,9 @@ a:focus{
 strong {
   font-weight: 500;
 }
+.nav > li > a {
+  margin: 0 -15px;
+}
 ::selection {
   color: white;
   background: #a11;
