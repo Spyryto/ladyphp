@@ -1,6 +1,6 @@
 {
     "name": "unu/ladyphp",
-    "description": "Type PHP with elegance.",
+    "description": "PHP preprocessor that makes your code look beautiful.",
     "authors": [
         {
             "name": "Honza Novák",
