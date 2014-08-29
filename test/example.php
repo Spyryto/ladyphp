@@ -57,6 +57,7 @@ $a->$x;
 $class();
 $this->class;
 parent::$a;
+$obj->parent->a;
 foreach($list as $x => $y){}
 $list = [
   'x' => 0,

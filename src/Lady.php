@@ -51,11 +51,11 @@ class Lady {
       'var' => '[TV]',
     ],
     'toPhp' => [
-      '(([$\\\\]|->) keyword)' => '$2V', // mark variables
-      '(^|[^\?:S\s\\\\]):(space)' => '$1 =>$2', // colons to double arrows
-      '(^|[,[(]space*)key(\s?=>)' => "$1'I'$2", // quote array keys
       '(noesc)@@' => '$1self::', // @@ to self
       '(noesc)@' => '$1$this->', // @ to $this
+      '(([$\\\\.]|->) keyword)' => '$2V', // mark variables
+      '(^|[^\?:S\s\\\\]):(space)' => '$1 =>$2', // colons to double arrows
+      '(^|[,[(]space*)key(\s?=>)' => "$1'I'$2", // quote array keys
       '\.([^.=D])' => '->$1', // dots to arrows
       '(class)->' => '$1::', // arrows to two colons
       '(noesc)~' => '$1.', // tilde to single dot
