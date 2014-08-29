@@ -2,9 +2,9 @@
 
 class Lady {
   public static $rules = [
-    'parser' => '(?:(?:<\?php) | ((?:^|\?>) (?:[^<]|<[^?])* (?=<\?|$))
+    'parser' => '(?:(?:<\?php) | ((?:^|\?>) (?:[^<]|<(?:[^?]|$))* (?=<\?|$))
       |(?:"[^"\\\\]*(?:\\\\[\s\S][^"\\\\]*)*"|\'[^\'\\\\]*(?:\\\\[\s\S][^\'\\\\]*)*\')
-      |(?://|\#)[^\n]*(?=\n) | /\*(?:[^*]|\*(?!/))*\*/ | (?:[a-zA-Z0-9_]\w*))',
+      |(?://|\#)[^\n]*(?=(?:\n|$)) | /\*(?:[^*]|\*(?!/))*\*/ | (?:[a-zA-Z0-9_]\w*))',
     'closure' => '(^|[^>.$]|[^-]>)F[S\s]*\(',
     'tokens' => [
       'A' => 'case|default',
@@ -29,16 +29,18 @@ class Lady {
       'T' => 'this',
       'U' => 'static',
       'V' => '_*[a-z]\w*|GLOBALS|_SERVER|_REQUEST|_POST|_GET|_FILES|_ENV|_COOKIE|_SESSION',
-      'H' => '[\'"][\w\W]*',
+      'Q' => '[\'"][\w\W]*',
       'C' => '_*[A-Z].*',
-      // N: empty, H: string, Y: string without quotes, B: closing bracket after closure
+      // N: empty, H: html, Y: string without quotes, B: closing bracket after closure
     ],
     'dictionary' => [
+      'as' => 'G',
       'case' => 'A',
       'class' => '[CERU]',
       'eol' => '(?:\n|$)',
       'eos' => '[S\s]*(\n|$)(?![S\s]*([\])\.\-+:=/%*&|>,\{?GJ]|<[^?]))',
       'function' => 'F',
+      'html' => 'H',
       'key' => '[AEFGJKLMOPRTUV]',
       'keyword' => '[AEFGJKLMOPRU]',
       'leading' => '[FGJLO]',
@@ -46,11 +48,10 @@ class Lady {
       'noesc' => '^|[^\\\\]',
       'noprop' => '^|[^>$\\\\]|[^-]>',
       'ns' => '[O\\\\]',
-      'as' => 'G',
       'phptag' => 'P',
       'self' => 'E',
-      'space' => '[S\s]',
-      'string' => '[HI]',
+      'space' => '[NS\s]',
+      'string' => '[QI]',
       'this' => 'T',
       'var' => '[TV]',
     ],
@@ -66,8 +67,8 @@ class Lady {
       '(class)->' => '$1::', // arrows to two colons
       '(noesc)~' => '$1.', // tilde to single dot
       '(noprop)(var(?!space*\())' => '$1$$2', // add dollars
-      '(string|[A-RT-Z\]\)\-\+]|[^\{;S\s]\})(eos)' => '$1;$2', // add trailing semicolons
-      '((?:noprop)leading|P);(space* eol)' => '$1$2', // no semicolons after leading keywords
+      '([A-RT-Z\]\)\-\+]|[^\{;S\s]\})(eos)' => '$1;$2', // add trailing semicolons
+      '(^space*|(?:noprop)leading|phptag|html);(space*eol)' => '$1$2', // no semicolons after leading keywords
       '(case[^\n]*)\s\=>' => '$1:', // no double arrows after cases
       '<\?(?!p[h][p]\\b|=)' => '<?php', // expand short tags
       '(methodprefix)(var,space*\()' => '$1function $2', // add functions
