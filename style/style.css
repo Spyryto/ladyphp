@@ -1,144 +1,161 @@
 body {
-  font-size: 18px;
-  font-family: "Ubuntu", "Helvetica", "Arial", sans-serif;
+	font-family: 'Ubuntu', 'Helvetica', 'Arial', sans-serif;
+	font-size: 18px;
 }
-textarea.form-control,
-.syntax-table>tbody>tr>td,
-pre, code {
-  font-family: "Ubuntu Mono", monospace;
-  font-size: 16px;
+.syntax-table > tbody > tr > td,
+pre,
+code {
+	font-family: 'Ubuntu Mono', monospace;
+	font-size: 16px;
 }
 p {
-  color: #444;
-  line-height: 1.9;
+	line-height: 1.9;
+	color: #444;
 }
-h2, h3 {
-  margin: 1em 0 .5em;
-  font-weight: 300;
-  font-size: 180%;
+h2,
+h3 {
+	font-size: 180%;
+	font-weight: 300;
+	margin: 1em 0 .5em;
 }
 a {
-  color: #a11;
+	color: #a11;
 }
 a:hover {
-  color: #d33;
+	color: #d33;
 }
-a:focus{
-  color: #600;
+a:focus {
+	color: #600;
 }
 strong {
-  font-weight: 500;
+	font-weight: 500;
 }
 .nav > li > a {
-  margin: 0 -15px;
+	margin: 0 -15px;
 }
 ::selection {
-  color: white;
-  background: #a11;
+	color: white;
+	background: #a11;
 }
 ::-moz-selection {
-  color: white;
-  background: #a11;
+	color: white;
+	background: #a11;
 }
 .top-stripe ::selection {
-  color: #a11;
-  background: white;
+	color: #a11;
+	background: white;
 }
 .top-stripe ::-moz-selection {
-  color: #a11;
-  background: white;
+	color: #a11;
+	background: white;
 }
 .top-stripe-box {
-  border-bottom: 10pt solid #ddd;
-  overflow: hidden;
+	overflow: hidden;
+	border-bottom: 10pt solid #ddd;
 }
 .top-stripe {
-  position: relative;
-  background: #a11 url("background.jpg") 0 center;
-  background-size: cover;
+	position: relative;
+	background: #a11 url('background.jpg') 0 center;
+	background-size: cover;
 }
 .title-box {
-  padding: 2.8em 0;
+	padding: 2.8em 0;
 }
-.title-box h1, .title-box h2 {
-  margin: 0;
-  color: white;
-  font-weight: 300;
+.title-box h1,
+.title-box h2 {
+	font-weight: 300;
+	margin: 0;
+	color: white;
 }
 .title-box h1 {
-  font-size: 250%;
+	font-size: 250%;
 }
 .title-box h2 {
-  font-size: 130%;
-  opacity: .6;
+	font-size: 130%;
+	opacity: .6;
 }
 .title-box .media-body {
-  margin-top: 1em;
+	margin-top: 1em;
 }
 .logo {
-  height: 6em;
-  width: 4.3em;
-  background: url("logo.svg") no-repeat;
-  background-size: contain;
+	width: 4.3em;
+	height: 6em;
+	background: url('logo.svg') no-repeat;
+	background-size: contain;
 }
 .container {
-  max-width: 38em;
+	max-width: 38em;
 }
 .content-box {
-  padding-bottom: 4em;
+	padding-bottom: 4em;
 }
 .demo {
-  padding: 1em .1em;
+	display: none;
+	padding: 1em .1em;
 }
-.demo div {
-  padding: .5em;
+.js .demo {
+	display: block;
 }
-textarea.form-control{
-  background: #fafafa;
-  font-size: 15px;
-  padding: .3em .5em;
-  min-width: 100%;
-  max-width: 100%;
-  min-height: 5em;
-  max-height: 60em;
+.demo > div {
+	padding: .5em;
 }
-.form-control:focus {
-  box-shadow: none;
+.CodeMirror {
+	font-size: 14px;
+	width: 100%;
+	height: 23em;
+	padding: .3em .5em;
+	cursor: text;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	background: #fafafa;
 }
-.syntax-table>tbody>tr>td {
-  width: 50%;
+.CodeMirror-focused {
+	border-color: #f88;
 }
-.syntax-table>tbody>tr>th {
-  background: #ddd !important;
-  font-weight: 500;
+div.cm-s-solarized span.CodeMirror-matchingbracket {
+	color: #a11;
+}
+.cm-s-solarized .cm-tab:before {
+	display: none;
+}
+.cm-s-solarized.CodeMirror {
+	background: #ffffea;
+	box-shadow: inset 0 0 4px -2px #888;
+}
+.syntax-table > tbody > tr > td {
+	width: 50%;
+}
+.syntax-table > tbody > tr > th {
+	font-weight: 500;
+	background: #ddd !important;
 }
 .footer-stripe {
-  background: #eee;
-  border-top: 1px solid #ccc;
+	border-top: 1px solid #ccc;
+	background: #eee;
 }
 .footer p {
-  margin: 2em 0;
-  color: #888;
-  font-size: 80%;
-  text-align: center;
+	font-size: 80%;
+	margin: 2em 0;
+	text-align: center;
+	color: #888;
 }
 .footer a {
-  color: #888;
+	color: #888;
 }
 
 @media (max-width: 550px) {
-  body {
-    font-size: 16px;
-  }
-  textarea.form-control,
-  .syntax-table>tbody>tr>td,
-  pre, code {
-    font-size: 14px;
-  }
-  .title-box h1 {
-    font-size: 160%;
-  }
-  .title-box h2 {
-    font-size: 120%;
-  }
+	body {
+		font-size: 16px;
+	}
+	.syntax-table > tbody > tr > td,
+	pre,
+	code {
+		font-size: 14px;
+	}
+	.title-box h1 {
+		font-size: 160%;
+	}
+	.title-box h2 {
+		font-size: 120%;
+	}
 }
