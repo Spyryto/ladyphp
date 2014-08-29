@@ -1,4 +1,6 @@
 <?php
+namespace my\app;
+use my\app as app2;
 
 /*
   Multiline
@@ -63,4 +65,3 @@ $list = [
   'x' => 0,
   $y => 1
 ];
-

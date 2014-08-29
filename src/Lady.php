@@ -11,16 +11,18 @@ class Lady {
       'D' => '[0-9].*',
       'E' => 'self',
       'F' => 'function',
+      'G' => 'as',
       'I' => '[\'"]_*[a-z][a-zA-Z0-9_]*[\'"]',
-      'J' => 'and|as|extends|implements|instanceof|insteadof|x?or',
+      'J' => 'and|extends|implements|instanceof|insteadof|x?or',
       'K' => 'break|continue|end(?:declare|for(?:each)?|if|switch|while)?
         |false|null|return|true',
       'L' => 'callable|catch|class|clone|const|declare|do|echo|else(?:if)?
-        |for(?:each)?|global|goto|if|include(?:_once)?|interface|namespace
-        |new|print|private|require(?:_once)?|switch|throw|trait|try|use|var
-        |while|yield|array|binary|bool(?:ean)?|double|float|int(?:eger)?
-        |object|real|string|unset',
+        |for(?:each)?|global|goto|if|include(?:_once)?|interface|new|print
+        |private|require(?:_once)?|switch|throw|trait|try|var|while
+        |yield|array|binary|bool(?:ean)?|double|float|int(?:eger)?|object
+        |real|string|unset',
       'M' => 'private|protected|public|final|abstract',
+      'O' => 'namespace|use',
       'P' => '<\?php',
       'R' => 'parent',
       'S' => '[/\#][\w\W]*',
@@ -29,20 +31,22 @@ class Lady {
       'V' => '_*[a-z]\w*|GLOBALS|_SERVER|_REQUEST|_POST|_GET|_FILES|_ENV|_COOKIE|_SESSION',
       'H' => '[\'"][\w\W]*',
       'C' => '_*[A-Z].*',
-      // N: empty, Y: string without quotes, B: closing bracket after closure
+      // N: empty, H: string, Y: string without quotes, B: closing bracket after closure
     ],
     'dictionary' => [
       'case' => 'A',
       'class' => '[CERU]',
       'eol' => '(?:\n|$)',
-      'eos' => '[S\s]*(\n|$)(?![S\s]*([\])\.\-+:=/%*&|>,\{?]|<[^?]|J))',
+      'eos' => '[S\s]*(\n|$)(?![S\s]*([\])\.\-+:=/%*&|>,\{?GJ]|<[^?]))',
       'function' => 'F',
-      'key' => '[AEFJKLMPRTUV]',
-      'keyword' => '[AFJKLMPRU]',
-      'leading' => '[FJL]',
+      'key' => '[AEFGJKLMOPRTUV]',
+      'keyword' => '[AEFGJKLMOPRU]',
+      'leading' => '[FGJLO]',
       'methodprefix' => '[MU][MSU\s]*',
       'noesc' => '^|[^\\\\]',
       'noprop' => '^|[^>$\\\\]|[^-]>',
+      'ns' => '[O\\\\]',
+      'as' => 'G',
       'phptag' => 'P',
       'self' => 'E',
       'space' => '[S\s]',
@@ -53,7 +57,9 @@ class Lady {
     'toPhp' => [
       '(noesc)@@' => '$1self::', // @@ to self
       '(noesc)@' => '$1$this->', // @ to $this
-      '(([$\\\\.]|->) keyword)' => '$2V', // mark variables
+      '(ns,space*)var|var(space*\\\\)' => '$1C$2', // mark namespaces
+      '(class,space*as,space*)var' => '$1C', // mark namespaces
+      '(([$.]|->) keyword)' => '$2V', // mark variables
       '(^|[^\?:S\s\\\\]):(space)' => '$1 =>$2', // colons to double arrows
       '(^|[,[(]space*)key(\s?=>)' => "$1'I'$2", // quote array keys
       '\.([^.=D])' => '->$1', // dots to arrows
@@ -63,7 +69,7 @@ class Lady {
       '(string|[A-RT-Z\]\)\-\+]|[^\{;S\s]\})(eos)' => '$1;$2', // add trailing semicolons
       '((?:noprop)leading|P);(space* eol)' => '$1$2', // no semicolons after leading keywords
       '(case[^\n]*)\s\=>' => '$1:', // no double arrows after cases
-      '<\?(?!ph[p]\\b|=)' => '<?php', // expand short tags
+      '<\?(?!p[h][p]\\b|=)' => '<?php', // expand short tags
       '(methodprefix)(var,space*\()' => '$1function $2', // add functions
       '\\\\([~@$])' => '$1', // unescape @, tildes and dollars
     ],
@@ -80,7 +86,7 @@ class Lady {
       '\$(keyword)' => '$V', // mark variables
       'I(\s?=>)' => 'Y$1', // unquote array keys
       '(^|[^S\s])\s?=>(\s)' => '$1:$2', // double arrows to colons
-      'phptag' => 'N<?', //convert long opening tag to short tag
+      '(phptag)' => 'N<?', //convert long opening tag to short tag
       '(methodprefix)function(?:space)(space*var)' => '$1N$2', // remove functions
       '\\\\\\$' => '$', // unescape dollars before keywords
       ';(space*eol)' => '$1', // remove trailing semicolons
@@ -117,7 +123,7 @@ class Lady {
         return $m[1] . (array_pop($brackets) ? 'B' : $m[2]);
       }
     }, $code);
-    $patterns = preg_replace_callback('/([a-z]{3,}),?/', function ($m) {
+    $patterns = preg_replace_callback('/([a-z]{2,}),?/', function ($m) {
       return self::$rules['dictionary'][$m[1]];
     }, array_keys($rules));
     $patterns = preg_replace('/^.*/s', '{$0}x', $patterns);
