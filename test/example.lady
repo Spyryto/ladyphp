@@ -40,7 +40,7 @@ class Fruit {
 
 fruit = new Fruit()
 
-anonym = function() use (fruit) {
+anonym = function(...args) use (fruit) {
   fruit.addApples(1)
        .addApples(2)
 }

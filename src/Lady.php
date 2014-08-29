@@ -62,7 +62,7 @@ class Lady {
       '(([$.]|->) keyword)' => '$2V', // mark variables
       '(^|[^\?:S\s\\\\]):(space)' => '$1 =>$2', // colons to double arrows
       '(^|[,[(]space*)key(\s?=>)' => "$1'I'$2", // quote array keys
-      '\.([^.=D])' => '->$1', // dots to arrows
+      '([^.])\.(?![.=D])' => '$1->', // dots to arrows
       '(class)->' => '$1::', // arrows to two colons
       '(noesc)~' => '$1.', // tilde to single dot
       '(noprop)(var(?!space*\())' => '$1$$2', // add dollars
@@ -79,7 +79,7 @@ class Lady {
       '(^|[,[(]space*)(\$var,space*=>)' => '$1\\\\$2', // escape dollars before keys
       '\$this->' => '@N', // $this to @
       'self::' => '@@N', // self to @@
-      '\.(?![=D])' => '~', // dots to tilde
+      '([^.])\.(?![.=D])' => '$1~', // dots to tilde
       '->' => '.', // arrows to dots
       '(class)::' => '$1.', // double colons to dots
       '(noesc)\$(var(?!space*\())' => '$1$2', // remove dolars

@@ -24,7 +24,7 @@ test-tolady:
 
 test-lint:
 	@printf 'Linting example.php: '
-	@php -l test/example.php > /dev/null
+	@sed 's/\.\.\.//' test/example.php | php -l > /dev/null
 	@echo 'PASSED'
 
 self-test:
