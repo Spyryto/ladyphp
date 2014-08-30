@@ -11,6 +11,7 @@ class Lady {
       ['([^()]*)([()])', '(^|[^ZNS\s>.$]|[^-]>)[NS\s]*[WX][NS\s]*$', '(', ')Z'], // other blocks
     ],
     'tokens' => [
+      // B: possible semicolon, H: html, N: empty, Y: key without quotes, Z: no semicolon
       'A' => 'case|default',
       'D' => '[0-9].*',
       'E' => 'self',
@@ -36,7 +37,6 @@ class Lady {
       'V' => '_*[a-z]\w*|GLOBALS|_SERVER|_REQUEST|_POST|_GET|_FILES|_ENV|_COOKIE|_SESSION',
       'Q' => '[\'"][\w\W]*',
       'C' => '_*[A-Z].*',
-      // N: empty, H: html, Y: string without quotes, B: posible semicolon, Z: no semicolon
     ],
     'dictionary' => [
       'as' => 'G',
@@ -66,8 +66,8 @@ class Lady {
       '(ns,space*)var|var(space*\\\\)' => '$1C$2', // mark namespaces
       '(class,space*as,space*)var' => '$1C', // mark namespaces
       '(([$.]|->) keyword)' => '$2V', // mark variables
-      '(^|[^\?:S\s\\\\]):(space)' => '$1 =>$2', // colons to double arrows
-      '(^|[,[(]space*)key(\s?=>)' => "$1'I'$2", // quote array keys
+      '(^|[,[(]space*)key(\s?(=>|:))' => "$1'I'$2", // quote array keys
+      '(^|[^\?:LZS\s\\\\]):(space)' => '$1 =>$2', // colons to double arrows
       '([^.])\.(?![.=D])' => '$1->', // dots to arrows
       '(class)->' => '$1::', // arrows to two colons
       '(noesc)~' => '$1.', // tilde to single dot
@@ -95,7 +95,7 @@ class Lady {
       '(phptag)' => 'N<?', //convert long opening tag to short tag
       '(methodprefix)function(?:space)(space*var)' => '$1N$2', // remove functions
       '\\\\\\$' => '$', // unescape dollars before keywords
-      ';(space*eol)' => '$1', // remove trailing semicolons
+      '(^|[^Z]space*);(space*eol)' => '$1$2', // remove trailing semicolons
     ]
   ];
 

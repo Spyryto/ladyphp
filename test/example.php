@@ -65,13 +65,22 @@ $list = [
   $y => 1
 ];
 
-foreach ($list as $x => $y)
-{
+foreach ($list as $x => $y) {
   echo "$x: $y";
 }
-if ($c == ($a + $b))
-  echo "single line";
 do
 {
   echo "loop";
 } while ($c);
+
+for ($i = 0; $i < $m; $i++)
+  dosomething($i);
+for ($i = 0; $i < $m; dosomething($i++));
+
+if ($a):
+  echo $a;
+elseif ($b):
+  echo $b;
+else:
+  echo "nothing";
+endif;
