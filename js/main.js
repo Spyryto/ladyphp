@@ -4,6 +4,19 @@ var textareas = [
 	document.getElementById('lady'),
 	document.getElementById('php'),
 ]
+var convert = function(ed, force) {
+	if (ed.hasFocus() || !force) {
+		if (ed == editors[0]) {
+			editors[1].setValue(Lady.toPhp(ed.getValue()));
+		} else {
+			editors[0].setValue(Lady.toLady(ed.getValue()));
+		}
+		pos = ed.getScrollInfo();
+		other = (ed == editors[0]) ? 1 : 0;
+		editors[other].scrollTo(pos.left, pos.top);
+		editors[0].save();
+	}
+};
 for (i in textareas) {
 	editor = CodeMirror.fromTextArea(textareas[i], {
 		value: textareas[i].value,
@@ -15,31 +28,18 @@ for (i in textareas) {
 		matchBrackets: true,
 		autoCloseBrackets: true,
 	});
-	var convert = function(ed) {
-		if (ed.hasFocus()) {
-			if (ed == editors[0]) {
-				editors[1].setValue(Lady.toPhp(ed.getValue()));
-			} else {
-				editors[0].setValue(Lady.toLady(ed.getValue()));
-			}
-			pos = ed.getScrollInfo();
-			other = (ed == editors[0]) ? 1 : 0;
-			editors[other].scrollTo(pos.left, pos.top)
-		}
-	};
 	editor.on('change', convert);
 	editor.on('focus', convert);
 	editor.on('scroll', function(ed) {
 		if (ed.hasFocus()) {
 			pos = ed.getScrollInfo();
 			other = (ed == editors[0]) ? 1 : 0;
-			editors[other].scrollTo(pos.left, pos.top)
+			editors[other].scrollTo(pos.left, pos.top);
 		}
-	})
+	});
 	editors[i] = editor;
 }
-editors[0].focus();
-editors[0].setCursor(100);
+convert(editors[0], false);
 
 // background scroll effect
 document.onscroll = function() {

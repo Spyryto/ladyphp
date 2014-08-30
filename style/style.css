@@ -8,21 +8,23 @@ code {
 	font-family: 'Ubuntu Mono', monospace;
 	font-size: 16px;
 }
+code {
+	color: #cb4b16;
+}
 p {
 	line-height: 1.9;
 	color: #444;
 }
-h2,
-h3 {
+h2 {
 	font-size: 180%;
 	font-weight: 300;
-	margin: 1em 0 .5em;
+	margin: 1.2em 0 .6em;
 }
 a {
-	color: #a11;
+	color: #d33;
 }
 a:hover {
-	color: #d33;
+	color: #e55;
 }
 a:focus {
 	color: #600;
@@ -59,7 +61,7 @@ strong {
 	background-size: cover;
 }
 .title-box {
-	padding: 2.8em 0;
+	padding: 2.5em 0;
 }
 .title-box h1,
 .title-box h2 {
@@ -75,23 +77,23 @@ strong {
 	opacity: .6;
 }
 .title-box .media-body {
-	margin-top: 1em;
+	margin-top: 1.3em;
 }
 .logo {
-	width: 4.3em;
-	height: 6em;
+	width: 5em;
+	height: 7em;
 	background: url('logo.svg') no-repeat;
 	background-size: contain;
 }
 .container {
 	max-width: 38em;
+	min-width: 15em;
 }
 .content-box {
 	padding-bottom: 4em;
 }
 .demo {
 	display: none;
-	padding: 1em .1em;
 }
 .js .demo {
 	display: block;
@@ -107,10 +109,13 @@ strong {
 	cursor: text;
 	border: 1px solid #ccc;
 	border-radius: 5px;
-	background: #fafafa;
 }
 .CodeMirror-focused {
 	border-color: #f88;
+}
+textarea.CodeMirror {
+	color: transparent;
+	background: #eee;
 }
 div.cm-s-solarized span.CodeMirror-matchingbracket {
 	color: #a11;
@@ -118,16 +123,34 @@ div.cm-s-solarized span.CodeMirror-matchingbracket {
 .cm-s-solarized .cm-tab:before {
 	display: none;
 }
+.code,
 .cm-s-solarized.CodeMirror {
-	background: #ffffea;
-	box-shadow: inset 0 0 4px -2px #888;
+	background: #f8f8fa;
+	box-shadow: inset 0 0 6px -3px #aaa;
+}
+.code {
+	color: #b58900;
+}
+.code .command {
+	color: #cb4b16;
+}
+.code .option {
+	color: #268bd2;
+}
+.code .comment {
+	color: #586e75;
 }
 .syntax-table > tbody > tr > td {
 	width: 50%;
+	padding: .5em 1em;
 }
 .syntax-table > tbody > tr > th {
 	font-weight: 500;
-	background: #ddd !important;
+	background: #e8e8ea !important;
+	padding: .5em 1em;
+}
+.syntax-table > tbody > tr > th:first-child {
+	border-right-color: transparent;
 }
 .footer-stripe {
 	border-top: 1px solid #ccc;
@@ -151,6 +174,15 @@ div.cm-s-solarized span.CodeMirror-matchingbracket {
 	pre,
 	code {
 		font-size: 14px;
+	}
+	.logo {
+		width: 4em;
+		height: 5em;
+		background: url('logo.svg') no-repeat;
+		background-size: contain;
+	}
+	.title-box .media-body {
+		margin-top: 3%;
 	}
 	.title-box h1 {
 		font-size: 160%;

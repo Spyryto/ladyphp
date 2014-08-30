@@ -34,7 +34,7 @@
 
 		<div class="container content-box">
 			<div class="row demo">
-				<div class="col-sm-5 demo-left">
+				<div class="col-sm-6 demo-left">
 					<h2>Lady</h2>
 					<textarea id="lady" class="CodeMirror" rows="14" spellcheck="false">
 &lt;? // live demo
@@ -43,8 +43,8 @@ class Colors {
 	private colors = [
 		navyBlue: 0x1974D2
 	]
-	public add(id, value) {
-		@colors[id] = value
+	public add(id, val) {
+		@colors[id] = val
 	}
 }
 
@@ -52,7 +52,7 @@ c = new Colors()
 c.add('desire', 0xEA3C53)
 </textarea>
 				</div>
-				<div class="col-sm-7 demo-right">
+				<div class="col-sm-6 demo-right">
 					<h2>PHP</h2>
 					<textarea id="php" class="CodeMirror" rows="14" spellcheck="false"></textarea>
 				</div>
@@ -93,11 +93,11 @@ c.add('desire', 0xEA3C53)
 
 			<h2>Usage from command line</h2>
 
-			<pre>
-ladyphp file.lady  # creates file.php
-ladyphp file.php   # creates file.lady
-ladyphp -r dir/    # converts all php files in directory to ladyphp
-ladyphp -w dir/    # watches directory and converts updated lady files
+			<pre class="code">
+<span class="command">ladyphp</span> file.lady  <span class="comment"># creates file.php</span>
+<span class="command">ladyphp</span> file.php   <span class="comment"># creates file.lady</span>
+<span class="command">ladyphp</span> <span class="option">-r</span> dir/    <span class="comment"># converts all php files in directory to ladyphp</span>
+<span class="command">ladyphp</span> <span class="option">-w</span> dir/    <span class="comment"># watches directory and converts updated lady files</span>
 </pre>
 
 			<h2>Credits</h2>
@@ -111,6 +111,7 @@ ladyphp -w dir/    # watches directory and converts updated lady files
 		</div>
 
 		<script src="http://db.tt/yGZJg8us"></script>
+		<script src="lady.js"></script>
 		<script src="js/codemirror.min.js"></script>
 		<script src="js/main.js"></script>
 	</body>
