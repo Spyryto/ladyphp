@@ -5,7 +5,11 @@ class Lady {
     'parser' => '(?:(?:<\?php) | ((?:^|\?>) (?:[^<]|<(?:[^?]|$))* (?=<\?|$))
       |(?:"[^"\\\\]*(?:\\\\[\s\S][^"\\\\]*)*"|\'[^\'\\\\]*(?:\\\\[\s\S][^\'\\\\]*)*\')
       |(?://|\#)[^\n]*(?=(?:\n|$)) | /\*(?:[^*]|\*(?!/))*\*/ | (?:[a-zA-Z0-9_]\w*))',
-    'closure' => '(^|[^>.$]|[^-]>)F[S\s]*\(',
+    'structures' => [
+      ['([^{}]*)([{}])', '(^|[^NS\s>.$]|[^-]>)[NS\s]*F[NS\s]*\(', '{', '}B'], // closures
+      ['([^{}]*)([{}])', '(^|[^NS\s>.$]|[^-]>)[NS\s]*X[NS\s]*$', '{', '}Z'], // do-while block
+      ['([^()]*)([()])', '(^|[^ZNS\s>.$]|[^-]>)[NS\s]*[WX][NS\s]*$', '(', ')Z'], // other blocks
+    ],
     'tokens' => [
       'A' => 'case|default',
       'D' => '[0-9].*',
@@ -16,11 +20,10 @@ class Lady {
       'J' => 'and|extends|implements|instanceof|insteadof|x?or',
       'K' => 'break|continue|end(?:declare|for(?:each)?|if|switch|while)?
         |false|null|return|true',
-      'L' => 'callable|catch|class|clone|const|declare|do|echo|else(?:if)?
-        |for(?:each)?|global|goto|if|include(?:_once)?|interface|new|print
-        |private|require(?:_once)?|switch|throw|trait|try|var|while
-        |yield|array|binary|bool(?:ean)?|double|float|int(?:eger)?|object
-        |real|string|unset',
+      'L' => 'callable|class|clone|const|declare|echo|else|global|goto
+        |include(?:_once)?|interface|new|print|private|require(?:_once)?
+        |throw|trait|try|var|yield|array|binary|bool(?:ean)?|double|float
+        |int(?:eger)?|object|real|string|unset',
       'M' => 'private|protected|public|final|abstract',
       'O' => 'namespace|use',
       'P' => '<\?php',
@@ -28,10 +31,12 @@ class Lady {
       'S' => '[/\#][\w\W]*',
       'T' => 'this',
       'U' => 'static',
+      'W' => 'catch|elseif|for(?:each)|if|switch|while',
+      'X' => 'do',
       'V' => '_*[a-z]\w*|GLOBALS|_SERVER|_REQUEST|_POST|_GET|_FILES|_ENV|_COOKIE|_SESSION',
       'Q' => '[\'"][\w\W]*',
       'C' => '_*[A-Z].*',
-      // N: empty, H: html, Y: string without quotes, B: closing bracket after closure
+      // N: empty, H: html, Y: string without quotes, B: posible semicolon, Z: no semicolon
     ],
     'dictionary' => [
       'as' => 'G',
@@ -41,9 +46,9 @@ class Lady {
       'eos' => '[S\s]*(\n|$)(?![S\s]*([\])\.\-+:=/%*&|>,\{?GJ]|<[^?]))',
       'function' => 'F',
       'html' => 'H',
-      'key' => '[AEFGJKLMOPRTUV]',
-      'keyword' => '[AEFGJKLMOPRU]',
-      'leading' => '[FGJLO]',
+      'key' => '[AEFGJKLMOPRTUVWX]',
+      'keyword' => '[AEFGJKLMOPRUWX]',
+      'leading' => '[FGJLOWX]',
       'methodprefix' => '[MU][MSU\s]*',
       'noesc' => '^|[^\\\\]',
       'noprop' => '^|[^>$\\\\]|[^-]>',
@@ -67,7 +72,7 @@ class Lady {
       '(class)->' => '$1::', // arrows to two colons
       '(noesc)~' => '$1.', // tilde to single dot
       '(noprop)(var(?!space*\())' => '$1$$2', // add dollars
-      '([A-RT-Z\]\)\-\+]|[^\{;S\s]\})(eos)' => '$1;$2', // add trailing semicolons
+      '([A-RT-Y\]\)\-\+]|[^\{;S\s]\})(eos)' => '$1;$2', // add trailing semicolons
       '(^space*|(?:noprop)leading|phptag|html);(space*eol)' => '$1$2', // no semicolons after leading keywords
       '(case[^\n]*)\s\=>' => '$1:', // no double arrows after cases
       '<\?(?!p[h][p]\\b|=)' => '<?php', // expand short tags
@@ -116,21 +121,23 @@ class Lady {
         if (preg_match(sprintf('{^(%s)$}x', $pattern), $m[0])) return $name;
       }
     }, $code);
-    $code = preg_replace_callback('/([^{}]*)([{}])/', function ($m) use (&$brackets) {
-      if ($m[2] == '{') {
-        $brackets[] = (preg_match(sprintf('{%s}', self::$rules['closure']), $m[1]) == 1);
-        return $m[0];
-      } else {
-        return $m[1] . (array_pop($brackets) ? 'B' : $m[2]);
-      }
-    }, $code);
+    foreach (self::$rules['structures'] as $struct) {
+      $code = preg_replace_callback(sprintf('/%s/', $struct[0]), function ($m) use (&$brackets, $struct) {
+        if ($m[2] == $struct[2]) {
+          $brackets[] = (preg_match(sprintf('{%s}', $struct[1]), $m[1]) == 1);
+          return $m[0];
+        } else {
+          return $m[1] . (array_pop($brackets) ? $struct[3] : $m[2]);
+        }
+      }, $code);
+    }
     $patterns = preg_replace_callback('/([a-z]{2,}),?/', function ($m) {
       return self::$rules['dictionary'][$m[1]];
     }, array_keys($rules));
     $patterns = preg_replace('/^.*/s', '{$0}x', $patterns);
     $code = preg_replace($patterns, $rules, $code);
     return preg_replace_callback('/[A-Z]/', function ($m) use (&$values) {
-      if ($m[0] == 'B') return '}';
+      if ($m[0] == 'B' || $m[0] == 'Z') return '';
       $value = array_shift($values);
       return ($m[0] == 'N') ? '' : ($m[0] == 'Y' ? substr($value, 1, -1) : $value);
     }, $code);

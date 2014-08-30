@@ -60,8 +60,18 @@ $class();
 $this->class;
 parent::$a;
 $obj->parent->a;
-foreach($list as $x => $y){}
 $list = [
   'x' => 0,
   $y => 1
 ];
+
+foreach ($list as $x => $y)
+{
+  echo "$x: $y";
+}
+if ($c == ($a + $b))
+  echo "single line";
+do
+{
+  echo "loop";
+} while ($c);

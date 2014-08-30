@@ -15,7 +15,7 @@ You can [try JavaScript version](http://ladyphp.honzanovak.com) of LadyPHP right
 ## Download
 
 - [Source code on GitHub](http://github.com/unu/ladyphp)
-- [Executable PHAR file](http://db.tt/ITnDm5KI)
+- [Executable PHAR file](http://db.tt/F1sig8w0)
 - [Plugin for Sublime Text 2/3](http://github.com/unu/sublime-ladyphp)
 - [Plugin for Vim](http://github.com/unu/vim-ladyphp)
 
