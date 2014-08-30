@@ -18,8 +18,8 @@ class Lady {
       'G' => 'as',
       'I' => '[\'"]_*[a-z][a-zA-Z0-9_]*[\'"]',
       'J' => 'and|extends|implements|instanceof|insteadof|x?or',
-      'K' => 'break|continue|end(?:declare|for(?:each)?|if|switch|while)?
-        |false|null|return|true',
+      'K' => 'break|continue|die|end(?:declare|for(?:each)?|if|switch|while)
+        |exit|false|null|return|true',
       'L' => 'callable|class|clone|const|declare|echo|else|global|goto
         |include(?:_once)?|interface|new|print|private|require(?:_once)?
         |throw|trait|try|var|yield|array|binary|bool(?:ean)?|double|float
@@ -31,7 +31,7 @@ class Lady {
       'S' => '[/\#][\w\W]*',
       'T' => 'this',
       'U' => 'static',
-      'W' => 'catch|elseif|for(?:each)|if|switch|while',
+      'W' => 'catch|elseif|for(?:each)?|if|switch|while',
       'X' => 'do',
       'V' => '_*[a-z]\w*|GLOBALS|_SERVER|_REQUEST|_POST|_GET|_FILES|_ENV|_COOKIE|_SESSION',
       'Q' => '[\'"][\w\W]*',
