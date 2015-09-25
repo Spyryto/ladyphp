@@ -9,6 +9,7 @@
     ],
     "bin": ["bin/ladyphp"],
     "autoload": {
+        "files": ["src/LadyLoader.php"],
         "psr-0": {
             "Lady": "src/",
             "LadyCommand": "src/"

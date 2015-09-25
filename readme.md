@@ -47,6 +47,17 @@ ladyphp -r dir/    # converts all php files in directory to ladyphp
 ladyphp -w dir/    # watches directory and converts updated lady files
 ```
 
+## Usage from PHP
+
+```php
+<?php
+// use composer autoloader or this
+require_once(__DIR__ . '/ladyphp/src/loader.php');
+
+// use lady() or lady_once()
+lady(__DIR__ . '/index.lady');
+```
+
 ## Credits
 
 LadyPHP is created by [Honza Novák](http://honzanovak.com) and it's licensed under a [Creative Commons BY-SA](http://creativecommons.org/licenses/by-sa/4.0/).

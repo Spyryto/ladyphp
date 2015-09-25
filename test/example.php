@@ -40,12 +40,12 @@ class Fruit {
 
 $fruit = new Fruit();
 
-$anonym = function(...$args) use ($fruit) {
+$anonym = function($args) use ($fruit) {
   $fruit->addApples(1)
        ->addApples(2);
 };
 
-$anonym();
+$anonym(true);
 
 ?><p><?php echo $fruit->countApples() ?></p><?php
 ?><p><?= $fruit->countApples() ?></p><?php
