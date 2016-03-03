@@ -3,6 +3,7 @@
 class Lady {
   public static $rules = [
     'parser' => '(?:(?:<\?php) | ((?:^|\?>) (?:[^<]|<(?:[^?]|$))* (?=<\?|$))
+      |(?:\<\<\<\'?(\w+)\'?\n[\s\S]*?\n\2(?=[\n;]))
       |(?:"[^"\\\\]*(?:\\\\[\s\S][^"\\\\]*)*"|\'[^\'\\\\]*(?:\\\\[\s\S][^\'\\\\]*)*\')
       |(?://|\#)[^\n]*(?=(?:\n|$)) | /\*(?:[^*]|\*(?!/))*\*/ | (?:[a-zA-Z0-9_]\w*))',
     'structures' => [
@@ -116,6 +117,7 @@ class Lady {
     $parser = sprintf('{%s}x', self::$rules['parser']);
     $code = preg_replace_callback($parser, function ($m) use (&$values) {
       $values[] = $m[0];
+      if (isset($m[2])) return 'Q';
       if (isset($m[1])) return 'H';
       foreach (self::$rules['tokens'] as $name => $pattern) {
         if (preg_match(sprintf('{^(%s)$}x', $pattern), $m[0])) return $name;

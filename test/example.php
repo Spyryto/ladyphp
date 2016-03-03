@@ -84,3 +84,17 @@ elseif ($b):
 else:
   echo "nothing";
 endif;
+
+$nowdoc = <<<'eof'
+multiline;
+'eof';
+string
+eof;
+
+$heredoc = <<<eof
+multiline;
+string
+eof;
+
+$end = true;
+
